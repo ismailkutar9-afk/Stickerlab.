@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paketler — YAPIŞKAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Familjen+Grotesk:wght@400;500;600;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF8E7;--ink:#1A1A1A;--hot:#FF3D5A;--lime:#C8FF3D;--sky:#4DCBFF;--plum:#6E2BFF;--cream:#FFEDB8;--paper:#FFFDF5;--shadow:6px 6px 0 var(--ink)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Familjen Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(circle at 1px 1px,rgba(0,0,0,.07) 1px,transparent 0);background-size:22px 22px}
+a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;border:none;background:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:3px solid var(--ink);background:var(--bg);position:sticky;top:0;z-index:200}
+.logo{font-family:'Bowlby One';font-size:28px;letter-spacing:-1px;transform:rotate(-2deg);display:inline-block}.logo span{color:var(--hot)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-link{font-weight:700;font-size:13px;border:2px solid var(--ink);padding:8px 18px;border-radius:999px;transition:all .2s;background:var(--bg)}
+.nav-link:hover{background:var(--lime)}
+.back-btn{font-weight:700;font-size:13px;border:2px solid var(--ink);padding:8px 20px;border-radius:999px;cursor:pointer;transition:all .2s;background:var(--bg)}.back-btn:hover{background:var(--lime);transform:translateX(-4px)}
+.hero{background:var(--ink);color:var(--bg);padding:72px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.04) 1px,transparent 0);background-size:22px 22px}
+.hero-in{max-width:1200px;margin:0 auto;position:relative}
+.hero h1{font-family:'Bowlby One';font-size:clamp(48px,8vw,96px);line-height:.85;letter-spacing:-3px}
+.lime{color:var(--lime)}.badge{display:inline-flex;align-items:center;gap:8px;background:var(--lime);color:var(--ink);font-family:'Bowlby One';font-size:11px;padding:7px 16px;border:2px solid var(--ink);border-radius:999px;margin-bottom:16px}
+.hero p{font-size:17px;opacity:.7;margin-top:18px;max-width:520px;line-height:1.6}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:var(--bg);padding:13px 26px;border-radius:999px;border:3px solid var(--hot);font-weight:700;font-size:14px;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* PAKET GRID */
+.packs-wrap{max-width:1300px;margin:0 auto;padding:60px 40px 100px}
+.packs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px}
+.pack-card{
+  border:3px solid var(--ink);border-radius:24px;overflow:hidden;background:var(--paper);
+  box-shadow:var(--shadow);transition:all .25s;display:flex;flex-direction:column;position:relative;
+}
+.pack-card:hover{transform:translate(-4px,-4px);box-shadow:10px 10px 0 var(--ink)}
+.pack-head{padding:24px 24px 16px;color:#fff;position:relative}
+.pack-head.p-cyber{background:linear-gradient(135deg,#6E2BFF,#FF3D5A)}
+.pack-head.p-pixel{background:linear-gradient(135deg,#4DCBFF,#6E2BFF)}
+.pack-head.p-mini{background:linear-gradient(135deg,#1A1A1A,#555)}
+.pack-head.p-manga{background:linear-gradient(135deg,#FF3D5A,#FF9A3D)}
+.pack-head.p-clay{background:linear-gradient(135deg,#FF9A3D,#C8FF3D);color:var(--ink)}
+.pack-head.p-vapor{background:linear-gradient(135deg,#FF6EC7,#4DCBFF)}
+.pack-head.p-water{background:linear-gradient(135deg,#4DCBFF,#C8FF3D);color:var(--ink)}
+.pack-head.p-mix{background:linear-gradient(135deg,#C8FF3D,#FF3D5A)}
+.pack-emoji{font-size:40px;line-height:1}
+.pack-name{font-family:'Bowlby One';font-size:24px;letter-spacing:-1px;margin-top:10px}
+.pack-count{font-size:12px;font-weight:700;opacity:.85;margin-top:2px}
+.pack-disc{position:absolute;top:14px;right:18px;background:var(--ink);color:var(--lime);font-family:'Bowlby One';font-size:13px;padding:6px 12px;border-radius:8px;transform:rotate(5deg);border:2px solid var(--bg)}
+.pack-best{position:absolute;top:14px;left:18px;background:var(--lime);color:var(--ink);font-family:'Bowlby One';font-size:10px;padding:5px 10px;border-radius:6px;border:2px solid var(--ink);letter-spacing:.05em}
+.pack-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px}
+.pack-thumb{aspect-ratio:1;border-radius:10px;border:2px solid var(--ink);background:var(--cream);background-size:cover;background-position:center;display:grid;place-items:center;font-size:22px;overflow:hidden}
+.pack-body{padding:0 24px 20px;flex:1;display:flex;flex-direction:column}
+.pack-desc{font-size:14px;opacity:.7;line-height:1.5;margin-bottom:18px;flex:1}
+.pack-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pack-price{font-family:'Bowlby One';font-size:30px;color:var(--hot)}
+.pack-price small{display:block;font-family:'Familjen Grotesk';font-size:13px;color:#999;text-decoration:line-through;font-weight:600}
+.pack-btn{background:var(--ink);color:#fff;padding:13px 22px;border-radius:12px;font-family:'Bowlby One';font-size:14px;letter-spacing:.5px;box-shadow:3px 3px 0 var(--hot);transition:all .2s;white-space:nowrap}
+.pack-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--hot);background:var(--hot)}
+.pack-btn:active{transform:scale(.97)}
+
+.info-strip{max-width:1300px;margin:0 auto;padding:0 40px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.info-box{background:var(--lime);border:3px solid var(--ink);border-radius:16px;padding:20px;text-align:center;box-shadow:4px 4px 0 var(--ink)}
+.info-box .ib-em{font-size:32px}
+.info-box .ib-t{font-family:'Bowlby One';font-size:15px;margin-top:8px}
+.info-box .ib-d{font-size:12px;opacity:.7;margin-top:4px}
+
+@media(max-width:600px){
+  .hero{padding:50px 24px}
+  .packs-wrap{padding:36px 16px 80px}
+  .nav{padding:14px 18px}
+  .nav-link{display:none}
+  .info-strip{grid-template-columns:1fr;padding:0 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<nav class="nav">
+  <a href="index.html" class="logo">YAPIŞ<span>KAN.</span></a>
+  <div class="nav-right">
+    <a href="urunler.html" class="nav-link">Tüm Ürünler</a>
+    <button class="back-btn" onclick="history.back()">← Geri</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-in">
+    <div class="badge">🎁 Hazır Paketler</div>
+    <h1>SEÇ,<br><span class="lime">SEPETE AT</span><br>BİTTİ.</h1>
+    <p>Temasına göre özenle hazırlanmış sticker paketleri. Tek tek seçmekle uğraşma — paket fiyatları her zaman daha avantajlı.</p>
+  </div>
+</div>
+
+<div class="packs-wrap">
+  <div class="packs-grid" id="packsGrid"></div>
+</div>
+
+<div class="info-strip">
+  <div class="info-box"><div class="ib-em">💧</div><div class="ib-t">Su Geçirmez Vinil</div><div class="ib-d">Tüm paketler dayanıklı mat/parlak laminat</div></div>
+  <div class="info-box"><div class="ib-em">🚚</div><div class="ib-t">Ücretsiz Kargo</div><div class="ib-d">Tüm paketlerde kargo bedava</div></div>
+  <div class="info-box"><div class="ib-em">↩️</div><div class="ib-t">30 Gün İade</div><div class="ib-d">Beğenmezsen koşulsuz iade</div></div>
+</div>
+
+<script>
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+
+// ── PAKETLER paketler.json'dan okunur ──
+let BIRIM = 80;
+let PACKS = [];
+
+function indirimYuzde(p){ return Math.round((1 - p.fiyat/(p.adet*BIRIM))*100); }
+
+function kartlariCiz(){
+  document.getElementById('packsGrid').innerHTML = PACKS.map((p,i)=>`
+  <div class="pack-card">
+    <div class="pack-head ${p.renk||'p-mix'}">
+      ${p.en_avantajli?'<div class="pack-best">⭐ EN AVANTAJLI</div>':''}
+      <div class="pack-disc">-%${indirimYuzde(p)}</div>
+      <div class="pack-emoji">${p.emoji}</div>
+      <div class="pack-name">${p.isim}</div>
+      <div class="pack-count">${p.adet} sticker</div>
+    </div>
+    <div class="pack-preview" id="prev${i}">
+      ${Array.from({length:4}).map(()=>`<div class="pack-thumb">${p.emoji}</div>`).join('')}
+    </div>
+    <div class="pack-body">
+      <div class="pack-desc">${p.aciklama}</div>
+      <div class="pack-foot">
+        <div class="pack-price">${p.fiyat}₺<small>${p.adet*BIRIM}₺</small></div>
+        <button class="pack-btn" onclick="sepeteEkle(${i})">SEPETE AT +</button>
+      </div>
+    </div>
+  </div>
+`).join('');
+}
+
+function sepeteEkle(i){
+  const p = PACKS[i];
+  toast(`🛒 "${p.isim}" (${p.adet} sticker) sepete eklendi — ${p.fiyat}₺`);
+}
+
+async function baslat(){
+  try{
+    const r = await fetch('paketler.json');
+    if(!r.ok) throw new Error();
+    const d = await r.json();
+    BIRIM = d.birim || 80;
+    PACKS = d.paketler || [];
+  }catch(e){
+    document.getElementById('packsGrid').innerHTML = '<p style="padding:40px;font-weight:600">⚠️ paketler.json yüklenemedi.</p>';
+    return;
+  }
+  kartlariCiz();
+  await gorselleriYukle();
+}
+
+// Gerçek Cloudinary görsellerini urunler.json'dan çek ve önizlemeleri doldur
+async function gorselleriYukle(){
+  try{
+    const r = await fetch('urunler.json');
+    if(!r.ok) throw new Error();
+    const data = await r.json();
+    const urunler = data.urunler || [];
+
+    // Kategoriye göre grupla
+    const gruplar = {};
+    urunler.forEach(u=>{ (gruplar[u.kategori] = gruplar[u.kategori]||[]).push(u); });
+
+    PACKS.forEach((p,i)=>{
+      let secim = [];
+      const kat = p.kategori || p.key;
+      if(kat==='mix'){
+        // Farklı kategorilerden birer örnek
+        const katlar = Object.keys(gruplar);
+        for(const k of katlar){ if(gruplar[k][0]){ secim.push(gruplar[k][0]); } if(secim.length>=4) break; }
+      } else {
+        secim = (gruplar[kat]||[]).slice(0,4);
+      }
+      const cont = document.getElementById('prev'+i);
+      if(cont && secim.length){
+        cont.innerHTML = secim.map(u=>
+          `<div class="pack-thumb" style="background-image:url('${u.thumbnail}')"></div>`
+        ).join('');
+        // 4'ten az çıkarsa kalanları emoji ile doldur
+        while(cont.children.length<4){
+          const d=document.createElement('div'); d.className='pack-thumb'; d.textContent=p.emoji; cont.appendChild(d);
+        }
+      }
+    });
+  }catch(e){
+    // urunler.json yüklenmezse emoji placeholder kalır — sorun değil
+  }
+}
+baslat();
+</script>
+</body>
+</html>
