@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ürünler — YAPIŞKAN</title>
+<title>Ürünler — StickerLab</title>
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Familjen+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#FFF8E7;--ink:#1A1A1A;--hot:#FF3D5A;--lime:#C8FF3D;--sky:#4DCBFF;--plum:#6E2BFF;--cream:#FFEDB8;--paper:#FFFDF5;--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
@@ -21,13 +21,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
 /* HEADER */
 .page-head{background:var(--ink);color:var(--bg);padding:48px 60px;border-bottom:3px solid var(--ink)}
-.page-head-in{max-width:1300px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.page-head-in{max-width:1600px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px}
 .ph-title{font-family:'Bowlby One';font-size:clamp(36px,5vw,64px);letter-spacing:-2px}
 .ph-title span{color:var(--lime)}
 .ph-count{font-size:14px;opacity:.5;margin-top:8px}
 
 /* ARAMA + FİLTRE */
-.toolbar{max-width:1300px;margin:0 auto;padding:24px 60px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:2px solid rgba(0,0,0,.08)}
+.toolbar{max-width:1600px;margin:0 auto;padding:24px 60px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:2px solid rgba(0,0,0,.08)}
 .search-box{display:flex;align-items:center;gap:10px;background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:10px 18px;flex:1;min-width:200px;max-width:360px;box-shadow:var(--shadow-sm)}
 .search-box input{border:none;outline:none;font-family:'Familjen Grotesk';font-size:15px;background:transparent;width:100%}
 .sort-sel{padding:11px 16px;border:3px solid var(--ink);border-radius:12px;font-family:'Familjen Grotesk';font-size:14px;font-weight:600;background:var(--bg);cursor:pointer;outline:none}
@@ -36,12 +36,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .view-btn.active{background:var(--hot);color:#fff}
 
 /* KATEGORİ FİLTRE */
-.cat-bar{max-width:1300px;margin:0 auto;padding:16px 60px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:2px solid rgba(0,0,0,.06)}
+.cat-bar{max-width:1600px;margin:0 auto;padding:16px 60px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:2px solid rgba(0,0,0,.06)}
 .cat-chip{padding:8px 18px;border:2px solid var(--ink);border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;background:var(--bg);transition:all .15s;white-space:nowrap}
 .cat-chip:hover{background:var(--cream)}.cat-chip.active{background:var(--ink);color:var(--bg)}
 
 /* ÜRÜN GRID */
-.products-section{max-width:1300px;margin:0 auto;padding:32px 60px}
+.products-section{max-width:1600px;margin:0 auto;padding:32px 60px}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
 .prod-grid.list-view{grid-template-columns:1fr}
 
@@ -125,6 +125,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   .modal-body{grid-template-columns:1fr}.modal-left{border-right:none;border-bottom:3px solid var(--ink)}
   .cart-dr{width:100%}
 }
+.fav-btn{position:relative;width:40px;height:40px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-size:16px;transition:background .15s,transform .15s;background:var(--bg)}
+.fav-btn:hover{background:var(--hot);transform:scale(1.1)}
+.fav-count{position:absolute;top:-6px;right:-6px;background:var(--hot);color:#fff;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:none;place-items:center;border:2px solid var(--bg)}
+.fav-heart{position:absolute;top:10px;right:10px;z-index:3;width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);background:rgba(255,255,255,.9);display:grid;place-items:center;font-size:16px;transition:transform .15s,background .15s}
+.fav-heart:hover{transform:scale(1.15);background:#fff}
+.fav-heart.active{background:var(--hot);border-color:var(--hot)}
 </style>
 </head>
 <body>
@@ -161,6 +167,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
             <button class="m-chip active" onclick="mSelOpt(this,'boyut','7cm',10)">7cm</button>
             <button class="m-chip" onclick="mSelOpt(this,'boyut','10cm',25)">10cm</button>
             <button class="m-chip" onclick="mSelOpt(this,'boyut','15cm',50)">15cm</button>
+            <button class="m-chip" onclick="mSelOpt(this,'boyut','A3 (30×42cm)',150)">A3 📄</button>
           </div>
           <label>Malzeme</label>
           <div class="modal-chips" id="mMalzeme">
@@ -184,9 +191,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="index.html" class="logo">YAPIŞ<span>KAN.</span></a>
+  <a href="index.html" class="logo">Sticker<span>Lab.</span></a>
   <div class="nav-right">
     <button class="back-btn" onclick="history.back()">← Geri</button>
+    <a href="#" class="ikas-satinal" style="display:none;font-weight:700;font-size:13px;border:2px solid var(--ink);background:var(--lime);padding:8px 16px;border-radius:999px;text-decoration:none;color:inherit">🛒 Satın Al</a>
+    <a href="favoriler.html" class="fav-btn" title="Favorilerim">❤️<span class="fav-count">0</span></a>
     <button class="cart-btn" onclick="openCart()">🛒 <div class="cart-dot" id="cartDot">0</div></button>
   </div>
 </nav>
@@ -234,6 +243,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   </div>
 </div>
 
+<script src="ikas-config.js"></script>
+<script src="favoriler.js"></script>
 <script>
 // ── STATE ──
 let tumUrunler = [];
@@ -291,6 +302,16 @@ const KAT_ISIM = {
   genel:'✨ Genel'
 };
 
+// ── FAVORİ ──
+function katEmoji(kat){ return (KAT_ISIM[kat]||'').split(' ')[0] || '⭐'; }
+function toggleFav(id, btn){
+  const u = tumUrunler.find(x=>x.id===id); if(!u) return;
+  const eklendi = Fav.toggle({name:u.isim, emoji:katEmoji(u.kategori), fiyat:u.fiyat, img:u.thumbnail});
+  btn.textContent = eklendi ? '❤️' : '🤍';
+  btn.classList.toggle('active', eklendi);
+  Fav.rozetGuncelle();
+}
+
 function katBarKur(){
   const katlar = ['hepsi', ...new Set(tumUrunler.map(u=>u.kategori).filter(Boolean))];
   document.getElementById('catBar').innerHTML = katlar.map(k=>`
@@ -344,8 +365,9 @@ function renderUrunler(){
     <div class="prod-card${isListView?' list-view':''}" onclick="openModal('${u.id}')">
       <div class="prod-img${isListView?' list-view':''}">
         <div class="prod-img-loader"><div class="sp"></div></div>
-        <img src="${u.thumbnail}" alt="${u.isim}" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.src='https://placehold.co/400x400/FFF8E7/1A1A1A?text=YAPIŞKAN';this.previousElementSibling.style.display='none'">
+        <img src="${u.thumbnail}" alt="${u.isim}" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.src='https://placehold.co/400x400/FFF8E7/1A1A1A?text=StickerLab';this.previousElementSibling.style.display='none'">
       </div>
+      <button class="fav-heart${Fav.ekliMi(u.isim)?' active':''}" onclick="event.stopPropagation();toggleFav('${u.id}',this)">${Fav.ekliMi(u.isim)?'❤️':'🤍'}</button>
       <div class="prod-info">
         <div class="prod-cat">${KAT_ISIM[u.kategori]||u.kategori}</div>
         <div class="prod-name">${u.isim}</div>
@@ -370,8 +392,9 @@ function dahaFazla(){
     <div class="prod-card${isListView?' list-view':''}" onclick="openModal('${u.id}')">
       <div class="prod-img${isListView?' list-view':''}">
         <div class="prod-img-loader"><div class="sp"></div></div>
-        <img src="${u.thumbnail}" alt="${u.isim}" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.src='https://placehold.co/400x400/FFF8E7/1A1A1A?text=YAPIŞKAN';this.previousElementSibling.style.display='none'">
+        <img src="${u.thumbnail}" alt="${u.isim}" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.src='https://placehold.co/400x400/FFF8E7/1A1A1A?text=StickerLab';this.previousElementSibling.style.display='none'">
       </div>
+      <button class="fav-heart${Fav.ekliMi(u.isim)?' active':''}" onclick="event.stopPropagation();toggleFav('${u.id}',this)">${Fav.ekliMi(u.isim)?'❤️':'🤍'}</button>
       <div class="prod-info">
         <div class="prod-cat">${KAT_ISIM[u.kategori]||u.kategori}</div>
         <div class="prod-name">${u.isim}</div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paketler — YAPIŞKAN</title>
+<title>Paketler — StickerLab</title>
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Familjen+Grotesk:wght@400;500;600;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#FFF8E7;--ink:#1A1A1A;--hot:#FF3D5A;--lime:#C8FF3D;--sky:#4DCBFF;--plum:#6E2BFF;--cream:#FFEDB8;--paper:#FFFDF5;--shadow:6px 6px 0 var(--ink)}
@@ -19,7 +19,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 .back-btn{font-weight:700;font-size:13px;border:2px solid var(--ink);padding:8px 20px;border-radius:999px;cursor:pointer;transition:all .2s;background:var(--bg)}.back-btn:hover{background:var(--lime);transform:translateX(-4px)}
 .hero{background:var(--ink);color:var(--bg);padding:72px 60px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.04) 1px,transparent 0);background-size:22px 22px}
-.hero-in{max-width:1200px;margin:0 auto;position:relative}
+.hero-in{max-width:1600px;margin:0 auto;position:relative}
 .hero h1{font-family:'Bowlby One';font-size:clamp(48px,8vw,96px);line-height:.85;letter-spacing:-3px}
 .lime{color:var(--lime)}.badge{display:inline-flex;align-items:center;gap:8px;background:var(--lime);color:var(--ink);font-family:'Bowlby One';font-size:11px;padding:7px 16px;border:2px solid var(--ink);border-radius:999px;margin-bottom:16px}
 .hero p{font-size:17px;opacity:.7;margin-top:18px;max-width:520px;line-height:1.6}
@@ -27,7 +27,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 /* PAKET GRID */
-.packs-wrap{max-width:1300px;margin:0 auto;padding:60px 40px 100px}
+.packs-wrap{max-width:1600px;margin:0 auto;padding:60px 40px 100px}
 .packs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px}
 .pack-card{
   border:3px solid var(--ink);border-radius:24px;overflow:hidden;background:var(--paper);
@@ -59,7 +59,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 .pack-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--hot);background:var(--hot)}
 .pack-btn:active{transform:scale(.97)}
 
-.info-strip{max-width:1300px;margin:0 auto;padding:0 40px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.info-strip{max-width:1600px;margin:0 auto;padding:0 40px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .info-box{background:var(--lime);border:3px solid var(--ink);border-radius:16px;padding:20px;text-align:center;box-shadow:4px 4px 0 var(--ink)}
 .info-box .ib-em{font-size:32px}
 .info-box .ib-t{font-family:'Bowlby One';font-size:15px;margin-top:8px}
@@ -72,14 +72,22 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
   .nav-link{display:none}
   .info-strip{grid-template-columns:1fr;padding:0 16px 40px}
 }
+.fav-btn{position:relative;width:38px;height:38px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-size:16px;transition:background .15s,transform .15s;background:var(--bg)}
+.fav-btn:hover{background:var(--hot);transform:scale(1.1)}
+.fav-count{position:absolute;top:-6px;right:-6px;background:var(--hot);color:#fff;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:none;place-items:center;border:2px solid var(--bg)}
+.pack-fav{width:46px;border:2px solid var(--ink);border-radius:12px;font-size:18px;background:var(--bg);transition:all .15s}
+.pack-fav:hover{background:var(--cream)}
+.pack-fav.active{background:var(--hot);border-color:var(--hot)}
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
 <nav class="nav">
-  <a href="index.html" class="logo">YAPIŞ<span>KAN.</span></a>
+  <a href="index.html" class="logo">Sticker<span>Lab.</span></a>
   <div class="nav-right">
     <a href="urunler.html" class="nav-link">Tüm Ürünler</a>
+    <a href="#" class="ikas-satinal" style="display:none;font-weight:700;font-size:13px;border:2px solid var(--ink);background:var(--lime);padding:8px 16px;border-radius:999px;text-decoration:none;color:inherit">🛒 Satın Al</a>
+    <a href="favoriler.html" class="fav-btn" title="Favorilerim">❤️<span class="fav-count">0</span></a>
     <button class="back-btn" onclick="history.back()">← Geri</button>
   </div>
 </nav>
@@ -102,6 +110,8 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
   <div class="info-box"><div class="ib-em">↩️</div><div class="ib-t">30 Gün İade</div><div class="ib-d">Beğenmezsen koşulsuz iade</div></div>
 </div>
 
+<script src="ikas-config.js"></script>
+<script src="favoriler.js"></script>
 <script>
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
 
@@ -128,6 +138,7 @@ function kartlariCiz(){
       <div class="pack-desc">${p.aciklama}</div>
       <div class="pack-foot">
         <div class="pack-price">${p.fiyat}₺<small>${p.adet*BIRIM}₺</small></div>
+        <button class="pack-fav${Fav.ekliMi(p.isim)?' active':''}" onclick="favToggle(${i},this)" title="Favorilere ekle">${Fav.ekliMi(p.isim)?'❤️':'🤍'}</button>
         <button class="pack-btn" onclick="sepeteEkle(${i})">SEPETE AT +</button>
       </div>
     </div>
@@ -138,6 +149,14 @@ function kartlariCiz(){
 function sepeteEkle(i){
   const p = PACKS[i];
   toast(`🛒 "${p.isim}" (${p.adet} sticker) sepete eklendi — ${p.fiyat}₺`);
+}
+function favToggle(i, btn){
+  const p = PACKS[i];
+  const eklendi = Fav.toggle({name:p.isim, emoji:p.emoji, fiyat:p.fiyat, img:p.gorsel||null});
+  btn.textContent = eklendi ? '❤️' : '🤍';
+  btn.classList.toggle('active', eklendi);
+  Fav.rozetGuncelle();
+  toast(eklendi ? `❤️ "${p.isim}" favorilere eklendi!` : `💔 "${p.isim}" favorilerden çıkarıldı.`);
 }
 
 async function baslat(){

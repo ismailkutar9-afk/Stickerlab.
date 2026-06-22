@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D Studio — YAPIŞKAN</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<title>3D Studio — StickerLab</title>
+<script src="lib/three.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Familjen+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── 3D STUDİO — YAPIŞKAN Teması ── */
+/* ── 3D STUDİO — StickerLab Teması ── */
 :root{--bg:#FFF8E7;--ink:#1A1A1A;--hot:#FF3D5A;--lime:#C8FF3D;--sky:#4DCBFF;--plum:#6E2BFF;--cream:#FFEDB8;--paper:#FFFDF5}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#0d0d0d;color:#F2EFE9;font-family:'Familjen Grotesk',sans-serif;height:100%;overflow:hidden}
 a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;border:none;background:none}
 /* NAV */
-.yl-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;border-bottom:2px solid rgba(255,255,255,.08);background:rgba(0,0,0,.7);backdrop-filter:blur(12px);position:fixed;top:0;left:0;right:0;z-index:200;height:52px}
+.yl-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;border-bottom:2px solid rgba(255,255,255,.08);background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);position:fixed;top:0;left:0;right:0;z-index:200;height:52px}
 .yl-logo{font-family:'Bowlby One';font-size:22px;letter-spacing:-1px;transform:rotate(-2deg);display:inline-block}.yl-logo span{color:var(--hot)}
 .yl-nav-right{display:flex;align-items:center;gap:10px}
 .yl-badge{background:var(--lime);color:var(--ink);font-family:'Bowlby One';font-size:11px;padding:5px 12px;border-radius:999px;letter-spacing:1px}
@@ -39,12 +39,12 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 .surf-opt:hover{border-color:var(--lime);background:rgba(200,255,61,.08)}
 .surf-opt.active{border-color:var(--lime);background:rgba(200,255,61,.12)}
 /* UPLOAD */
-.upload-zone{margin:12px;border:2px dashed rgba(255,255,255,.2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;position:relative;transition:all .2s}
-.upload-zone:hover{border-color:var(--lime)}
-.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-zone .upload-icon{font-size:26px;margin-bottom:6px}
-.upload-zone strong{display:block;font-size:12px;margin-bottom:3px}
-.upload-zone p{font-size:11px;opacity:.5}
+.upload-mini{display:inline-flex;align-items:center;gap:7px;margin:2px 12px 4px;padding:6px 11px;
+  border:1.5px dashed rgba(255,255,255,.22);border-radius:10px;cursor:pointer;position:relative;
+  font-size:11.5px;font-weight:700;color:rgba(255,255,255,.7);background:rgba(255,255,255,.03);transition:all .18s}
+.upload-mini:hover{border-color:var(--lime);color:#fff;background:rgba(200,255,61,.06)}
+.upload-mini input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-mini .ic{font-size:15px;line-height:1}
 #modelInfo{padding:8px 12px;margin:0 12px;font-size:11px;color:var(--lime);background:rgba(200,255,61,.08);border-radius:8px;display:none}
 /* STICKER UPLOAD */
 /* STİCKER KATEGORİ TABLARI */
@@ -55,15 +55,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
   color:rgba(255,255,255,.45);background:transparent;transition:all .15s;
 }
 .stk-cat-btn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
-.stk-cat-btn.active{background:var(--lime);color:var(--ink);border-color:var(--lime)}  margin:10px 12px 4px;border:2px dashed rgba(255,255,255,.2);border-radius:10px;
-  padding:14px;text-align:center;cursor:pointer;position:relative;transition:all .2s;
-}
-  position:absolute;top:-4px;right:-4px;
-  width:16px;height:16px;border-radius:50%;
-  background:var(--hot);color:#fff;font-size:10px;
-  display:grid;place-items:center;cursor:pointer;
-  opacity:0;transition:opacity .2s;z-index:2;
-}
+.stk-cat-btn.active{background:var(--lime);color:var(--ink);border-color:var(--lime)}
 
 
 .sticker-scroll{flex:1;overflow-y:auto;padding:12px}
@@ -75,7 +67,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 /* CANVAS */
 .canvas-wrap{position:relative;background:linear-gradient(135deg,#0a0a0a 0%,#141428 50%,#0a0a0a 100%)}
 #three-canvas{width:100%;height:100%;display:block}
-.canvas-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:rgba(255,255,255,.5);font-size:11px;font-weight:700;padding:7px 16px;border-radius:999px;letter-spacing:.5px;white-space:nowrap}
+.canvas-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:rgba(255,255,255,.5);font-size:11px;font-weight:700;padding:7px 16px;border-radius:999px;letter-spacing:.5px;white-space:nowrap;pointer-events:none}
 .sticker-layer{position:absolute;inset:0;pointer-events:none;}
 .placed-sticker{position:absolute;cursor:move;user-select:none;pointer-events:all;}
 /* CONTROLS */
@@ -106,7 +98,7 @@ input[type=range]{width:100%;accent-color:var(--lime);margin:6px 0}
 <div class="toast" id="toast"></div>
 
 <nav class="yl-nav">
-  <a href="index.html" class="yl-logo">YAPIŞ<span>KAN.</span></a>
+  <a href="index.html" class="yl-logo">Sticker<span>Lab.</span></a>
   <div class="yl-nav-right">
     <div class="yl-badge">🎮 3D STUDİO</div>
     <button class="yl-back" onclick="history.back()">← Geri</button>
@@ -124,15 +116,13 @@ input[type=range]{width:100%;accent-color:var(--lime);margin:6px 0}
     </div>
 
     <div class="panel-title">3D Model Yükle</div>
-    <div class="upload-zone" id="uploadZone">
+    <label class="upload-mini" id="uploadZone" title="Kendi GLB / GLTF modelini yükle (veya canvas'a sürükle)">
       <input type="file" id="modelFile" accept=".glb,.gltf">
-      <div class="upload-icon">⬆️</div>
-      <strong>GLB / GLTF</strong>
-      <p>Kendi modelini sürükle</p>
-    </div>
+      <span class="ic">⬆️</span><span>GLB / GLTF</span>
+    </label>
     <div id="modelInfo"></div>
 
-    <div class="panel-title">Sticker Seç</div>
+    <div class="panel-title">Tasarımların</div>
     <div class="stk-cat-tabs" id="stkCatTabs"></div>
     <div class="sticker-scroll">
       <div class="sticker-grid" id="stickerGrid"></div>
@@ -180,7 +170,7 @@ input[type=range]{width:100%;accent-color:var(--lime);margin:6px 0}
       <div class="ctrl-label">İşlemler</div>
       <button class="btn" id="clearBtn">🗑️ Tümünü Temizle</button>
       <button class="btn primary" id="orderBtn">📸 Kaydet & Sipariş</button>
-      <div class="order-note">Tasarımını kaydet, YAPIŞKAN'a gönder. 24 saatte üretelim.</div>
+      <div class="order-note">Tasarımını kaydet, StickerLab'a gönder. 24 saatte üretelim.</div>
     </div>
   </div>
 
@@ -223,7 +213,6 @@ const SURFACE_CATS = [
       {e:"🔋", n:"Powerbank",     geo:"box",  dim:[0.5,0.3,1.1]},
     ]
   },
-,
   {
     id:'daily', label:'☕ Günlük Kullanım', items:[
       {e:"☕", n:"Termos",        geo:"cyl",  dim:[0.55,0.45,1.6]},
@@ -357,6 +346,10 @@ function renderStickerGrid(){
   if(!grid) return;
   const cat = STICKER_CATS.find(c=>c.id===activeStkCat) || STICKER_CATS[0];
   grid.innerHTML = '';
+  if(!cat){
+    grid.innerHTML = '<div style="opacity:.45;font-size:12px;padding:24px 10px;text-align:center;grid-column:1/-1;line-height:1.6">Favorilerinden <b>“🎮 3D’de Gör”</b> ile bir tasarım gönder; burada görünür.</div>';
+    return;
+  }
   cat.items.forEach(s=>{
     const d = document.createElement('div');
     d.className = 'stk-item';
@@ -372,7 +365,9 @@ function renderStickerGrid(){
 }
 
 // STICKERS eski uyumluluk
-const STICKERS = STICKER_CATS[0].items;
+const STICKERS = (STICKER_CATS[0] && STICKER_CATS[0].items) || [];
+// Emoji sticker kütüphanesi kaldırıldı — sadece gönderilen gerçek tasarımlar / yüklenen görseller gösterilir
+STICKER_CATS.length = 0;
 
 
 const COLORS=['#1a1a1a','#2d2d2d','#E8322A','#D4A843','#F2EFE9','#185FA5','#534AB7','#0F6E56','#72243E','#ff6b35','#00d4aa','#ff3d91'];
@@ -380,7 +375,7 @@ const COLORS=['#1a1a1a','#2d2d2d','#E8322A','#D4A843','#F2EFE9','#185FA5','#534A
 let selectedSticker=null, placed=[], selPlaced=null;
 let scene,camera,renderer,modelMesh,ambientLight,dirLight;
 let isDragModel=false, prevMouse={x:0,y:0};
-let isDragStk=false, dragEl=null, dragOff={x:0,y:0};
+let isDragStk=false;
 let modelLoaded=false;
 
 // ── KATEGORİ TABLARI ──
@@ -1002,30 +997,25 @@ renderStickerGrid();
     const raw = localStorage.getItem('studioSticker');
     if(!raw) return;
     const data = JSON.parse(raw);
-    // 5 saniyeden eski ise yoksay
-    if(Date.now() - data.ts > 5000) { localStorage.removeItem('studioSticker'); return; }
+    // 60 saniyeden eski ise yoksay
+    if(Date.now() - data.ts > 60000) { localStorage.removeItem('studioSticker'); return; }
     localStorage.removeItem('studioSticker');
-    // Sticker'ı seç ve bildir
-    selectedSticker = { e: data.emoji, l: data.name, isImage: false };
+    if(!data.img) return;
+    // Gerçek tasarımı resim sticker olarak seç
+    selectedSticker = { url: data.img, l: data.name, isImage: true };
     showToast(`✅ "${data.name}" seçildi — modele tıkla!`);
-    // Sticker grid'de highlight et veya başa ekle
     const grid = document.getElementById('stickerGrid');
-    const existing = Array.from(grid.querySelectorAll('.stk-item'))
-      .find(el => el.textContent.trim().startsWith(data.emoji));
-    if(existing){
-      existing.classList.add('sel');
-      existing.scrollIntoView({behavior:'smooth', block:'center'});
-    } else {
-      // Grid'in başına ekle
+    if(grid){
       const d = document.createElement('div');
       d.className = 'stk-item sel';
-      d.innerHTML = `${data.emoji}<span class="lbl">${data.name.slice(0,8)}</span>`;
+      d.innerHTML = `<img src="${data.img}" style="width:100%;height:100%;object-fit:contain;border-radius:6px" alt=""><span class="lbl">${(data.name||'').slice(0,8)}</span>`;
       d.addEventListener('click', ()=>{
         document.querySelectorAll('.stk-item').forEach(x=>x.classList.remove('sel'));
         d.classList.add('sel');
-        selectedSticker = {e: data.emoji, l: data.name};
+        selectedSticker = { url: data.img, l: data.name, isImage: true };
       });
       grid.prepend(d);
+      d.scrollIntoView({behavior:'smooth', block:'center'});
     }
   } catch(e) {}
 })();
@@ -1033,6 +1023,7 @@ renderStickerGrid();
 
 // loadPrimitive — önce BUILDERS kontrol et, yoksa basit geo
 function loadPrimitive(s){
+  if(typeof clearStickers==='function') clearStickers();   // eski yüzeyin sticker'larını temizle
   if(modelMesh){
     if(Array.isArray(modelMesh)){modelMesh.forEach(m=>scene.remove(m));modelMesh=null;}
     else scene.remove(modelMesh);
@@ -1226,41 +1217,189 @@ function applyColor(hex){
   }
 }
 
-// ── ORBIT & STICKER DRAG ──
-let isOverSticker = false;
+// ── ORBIT + 3B STICKER (yüzeye oturan decal) ──
+// Sticker'lar artık 2B overlay değil; modelin yüzeyine konan ve modele BAĞLI
+// (child) 3B düzlemler. Model dönünce onlarla döner, arka yüze geçince saklanır.
 
+const raycaster = new THREE.Raycaster();
+const _ndc = new THREE.Vector2();
+const _Z = new THREE.Vector3(0,0,1);
+const STICKER_GEO = new THREE.PlaneGeometry(1,1);
+const BASE_STK = 0.72;          // sticker'ın temel dünya boyutu (daha görünür)
+const SURF_OFFSET = 0.02;       // z-fighting'i önlemek için yüzeyden ofset (dünya)
+
+let dragEntry=null, downPos=null, moved=false;
+
+function rotZ(rad){
+  return new THREE.Quaternion().setFromAxisAngle(_Z, rad);
+}
+
+// Emoji / sembolü saydam zeminli bir doku haline getir
+function _roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,  x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,  y+h,r);
+  ctx.arcTo(x,  y+h,x,  y,  r);
+  ctx.arcTo(x,  y,  x+w,y,  r);
+  ctx.closePath();
+}
+function emojiTexture(ch){
+  const S=256, pad=20, r=48;
+  const c=document.createElement('canvas'); c.width=c.height=S;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,S,S);
+  // beyaz yuvarlak "die-cut" etiket zemini + yumuşak gölge → her model renginde net görünür
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.4)'; ctx.shadowBlur=16; ctx.shadowOffsetY=5;
+  _roundRect(ctx, pad, pad, S-2*pad, S-2*pad, r);
+  ctx.fillStyle='#ffffff'; ctx.fill();
+  ctx.restore();
+  // ince kenar
+  _roundRect(ctx, pad, pad, S-2*pad, S-2*pad, r);
+  ctx.lineWidth=6; ctx.strokeStyle='rgba(0,0,0,.14)'; ctx.stroke();
+  // sembol/emoji — renkli emoji rengini korur, monokrom semboller koyu olur (beyaz zeminde görünür)
+  ctx.fillStyle='#171717';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font=`${Math.floor(S*0.5)}px "Apple Color Emoji","Segoe UI Emoji","Familjen Grotesk",sans-serif`;
+  ctx.fillText(ch, S/2, S/2 + S*0.02);
+  const t=new THREE.CanvasTexture(c);
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  t.needsUpdate=true;
+  return t;
+}
+function imgTexture(url){
+  const t=new THREE.TextureLoader().load(url, ()=>{ t.needsUpdate=true; });
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return t;
+}
+
+// Ekran koordinatından modele ışın at; sticker'ları yok say
+function raycastModel(clientX, clientY){
+  if(!modelMesh) return null;
+  const rect = canvasEl.getBoundingClientRect();
+  _ndc.x = ((clientX-rect.left)/rect.width)*2 - 1;
+  _ndc.y = -((clientY-rect.top)/rect.height)*2 + 1;
+  raycaster.setFromCamera(_ndc, camera);
+  const hits = raycaster.intersectObject(modelMesh, true);
+  for(const h of hits){ if(!(h.object.userData && h.object.userData.isSticker)) return h; }
+  return null;
+}
+// Yerleştirilmiş sticker'a tıklandı mı?
+function raycastSticker(clientX, clientY){
+  if(!placed.length) return null;
+  const rect = canvasEl.getBoundingClientRect();
+  _ndc.x = ((clientX-rect.left)/rect.width)*2 - 1;
+  _ndc.y = -((clientY-rect.top)/rect.height)*2 + 1;
+  raycaster.setFromCamera(_ndc, camera);
+  const hits = raycaster.intersectObjects(placed.map(p=>p.mesh), false);
+  if(hits.length){ const m=hits[0].object; return placed.find(p=>p.mesh===m) || null; }
+  return null;
+}
+
+// Bir yüzey vuruşunu modelin YEREL uzayında sakla (model dönünce takip etsin)
+function computeLocalAnchor(hit){
+  modelMesh.updateMatrixWorld(true);
+  const invModel = new THREE.Matrix4().copy(modelMesh.matrixWorld).invert();
+  const localPoint = hit.point.clone().applyMatrix4(invModel);
+  const nMatWorld = new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld);
+  const worldN = hit.face.normal.clone().applyMatrix3(nMatWorld).normalize();
+  const nMatInv = new THREE.Matrix3().getNormalMatrix(invModel);
+  const localN = worldN.clone().applyMatrix3(nMatInv).normalize();
+  return { localPoint, localN };
+}
+
+// Saklanan yerel çapa + boyut + dönüşten sticker'ın yerel transformunu kur
+function applyStickerTransform(entry){
+  const mesh = entry.mesh;
+  const modelScale = modelMesh.getWorldScale(new THREE.Vector3()).x || 1;
+  const offsetLocal = SURF_OFFSET / modelScale;
+  const localScale  = (BASE_STK * entry.scale) / modelScale;
+  mesh.position.copy(entry.localPoint).addScaledVector(entry.localN, offsetLocal);
+  const q = new THREE.Quaternion().setFromUnitVectors(_Z, entry.localN);
+  q.multiply(rotZ(entry.rot * Math.PI/180));
+  mesh.quaternion.copy(q);
+  mesh.scale.set(localScale, localScale, 1);
+}
+
+// ── PLACE STICKER — modele tıkla ──
+function placeStk(stk, clientX, clientY){
+  if(!modelMesh){ showToast('Önce bir yüzey seç'); return; }
+  const hit = raycastModel(clientX, clientY);
+  if(!hit){ showToast('🎯 Sticker için modelin üstüne tıkla'); return; }
+
+  const tex = stk.isImage ? imgTexture(stk.url) : emojiTexture(stk.e);
+  const mat = new THREE.MeshBasicMaterial({
+    map: tex, transparent:true, side:THREE.DoubleSide,
+    depthWrite:false, polygonOffset:true,
+    polygonOffsetFactor:-4, polygonOffsetUnits:-4
+  });
+  const mesh = new THREE.Mesh(STICKER_GEO, mat);
+  mesh.userData.isSticker = true;
+  mesh.renderOrder = 5;
+
+  const a = computeLocalAnchor(hit);
+  const entry = { mesh, stk, scale:1, rot:0, localPoint:a.localPoint, localN:a.localN };
+  applyStickerTransform(entry);
+  modelMesh.add(mesh);
+  placed.push(entry);
+  selStk(entry);
+  showToast(`${stk.isImage?'🖼️':stk.e} yüzeye eklendi`);
+}
+
+function removeSticker(entry){
+  if(entry.mesh.parent) entry.mesh.parent.remove(entry.mesh);
+  if(entry.mesh.material.map) entry.mesh.material.map.dispose();
+  entry.mesh.material.dispose();
+  placed = placed.filter(p=>p!==entry);
+  if(selPlaced===entry){ selPlaced=null; resetSelPanel(); }
+}
+function clearStickers(){
+  placed.forEach(p=>{
+    if(p.mesh.parent) p.mesh.parent.remove(p.mesh);
+    if(p.mesh.material.map) p.mesh.material.map.dispose();
+    p.mesh.material.dispose();
+  });
+  placed=[]; selPlaced=null; resetSelPanel();
+}
+function resetSelPanel(){
+  const el=document.getElementById('selPanel');
+  if(el) el.innerHTML='<div style="font-size:11px;opacity:.4">Sticker seçip canvas\'a tıkla</div>';
+}
+
+// ── INPUT ──
 canvasEl.addEventListener('mousedown', e=>{
-  if(e.button===0 && !isDragStk && !isOverSticker){
-    isDragModel=true;
-    prevMouse={x:e.clientX, y:e.clientY};
-  }
+  if(e.button!==0) return;
+  downPos={x:e.clientX,y:e.clientY}; moved=false;
+  const s = raycastSticker(e.clientX, e.clientY);
+  if(s){ isDragStk=true; dragEntry=s; selStk(s); }
+  else { isDragModel=true; prevMouse={x:e.clientX,y:e.clientY}; }
 });
 
 window.addEventListener('mousemove', e=>{
-  if(isDragModel && modelMesh && !isDragStk){
+  if(downPos && (Math.abs(e.clientX-downPos.x)+Math.abs(e.clientY-downPos.y))>4) moved=true;
+
+  // Sticker'ı yüzeyde sürükle
+  if(isDragStk && dragEntry && modelMesh){
+    const hit = raycastModel(e.clientX, e.clientY);
+    if(hit){
+      const a = computeLocalAnchor(hit);
+      dragEntry.localPoint=a.localPoint; dragEntry.localN=a.localN;
+      applyStickerTransform(dragEntry);
+    }
+    return;
+  }
+  // Modeli döndür
+  if(isDragModel && modelMesh){
     const dx=e.clientX-prevMouse.x, dy=e.clientY-prevMouse.y;
     modelMesh.rotation.y += dx*0.01;
     modelMesh.rotation.x += dy*0.01;
-    prevMouse={x:e.clientX, y:e.clientY};
-  }
-  if(isDragStk && dragEl){
-    const layer=document.getElementById('stickerLayer');
-    const rect=layer.getBoundingClientRect();
-    let nx = e.clientX - rect.left - dragOff.x;
-    let ny = e.clientY - rect.top  - dragOff.y;
-    // Sınır içinde tut
-    const w = dragEl.offsetWidth, h = dragEl.offsetHeight;
-    nx = Math.max(-w/2, Math.min(rect.width  - w/2, nx));
-    ny = Math.max(-h/2, Math.min(rect.height - h/2, ny));
-    dragEl.style.left = nx+'px';
-    dragEl.style.top  = ny+'px';
+    prevMouse={x:e.clientX,y:e.clientY};
   }
 });
 
 window.addEventListener('mouseup', ()=>{
-  isDragModel=false;
-  isDragStk=false;
-  dragEl=null;
+  isDragModel=false; isDragStk=false; dragEntry=null;
 });
 
 canvasEl.addEventListener('wheel', e=>{
@@ -1268,120 +1407,50 @@ canvasEl.addEventListener('wheel', e=>{
   camera.position.z = Math.max(1, Math.min(9, camera.position.z));
 },{passive:true});
 
-// ── PLACE STICKER — Canvas'a tıkla ──
+// Temiz tıklama: yeni sticker yerleştir (sürükleme/seçim değilse)
 canvasEl.addEventListener('click', e=>{
-  if(!modelLoaded || !selectedSticker) return;
-  if(isDragModel) return; // sürükleme bitti, tıklama sayma
-  const rect = canvasEl.getBoundingClientRect();
-  placeStk(selectedSticker, e.clientX - rect.left, e.clientY - rect.top);
+  if(moved){ moved=false; return; }          // döndürme veya sticker taşıma idi
+  const onSticker = raycastSticker(e.clientX, e.clientY);
+  if(onSticker){ selStk(onSticker); return; } // var olanı seç, yeni koyma
+  if(!modelLoaded){ return; }
+  if(!selectedSticker){ showToast('Önce soldan bir sticker seç'); return; }
+  placeStk(selectedSticker, e.clientX, e.clientY);
 });
 
-function placeStk(stk, x, y){
-  const layer = document.getElementById('stickerLayer');
-  const el = document.createElement('div');
-  el.className = 'placed-sticker';
-  el.style.cssText = `
-    position:absolute;
-    left:${x-30}px; top:${y-30}px;
-    cursor:move;
-    user-select:none;
-    touch-action:none;
-    pointer-events:all;
-    z-index:10;
-    transition: outline .15s;
-  `;
-
-  if(stk.isImage){
-    el.style.width='80px'; el.style.height='80px';
-    const img=document.createElement('img');
-    img.src=stk.url;
-    img.draggable=false;
-    img.style.cssText='width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))';
-    el.appendChild(img);
-  } else {
-    el.style.fontSize='52px';
-    el.style.lineHeight='1';
-    el.style.width='60px';
-    el.style.height='60px';
-    el.style.display='flex';
-    el.style.alignItems='center';
-    el.style.justifyContent='center';
-    el.textContent=stk.e;
-  }
-
-  const entry={el,stk,scale:1,rot:0};
-
-  // Mouse giriş/çıkış — orbit çakışması engelle
-  el.addEventListener('mouseenter', ()=>{ isOverSticker=true; });
-  el.addEventListener('mouseleave', ()=>{ if(!isDragStk) isOverSticker=false; });
-
-  // Sürükleme başlat
-  el.addEventListener('mousedown', ev=>{
-    ev.stopPropagation();
-    ev.preventDefault();
-    isDragStk=true;
-    isDragModel=false;
-    isOverSticker=true;
-    dragEl=el;
-    const r=el.getBoundingClientRect();
-    dragOff={x:ev.clientX-r.left, y:ev.clientY-r.top};
-    selStk(entry);
-  });
-
-  // Çift tıkla sil
-  el.addEventListener('dblclick', ev=>{
-    ev.stopPropagation();
-    el.remove();
-    placed=placed.filter(p=>p.el!==el);
-    isOverSticker=false;
-    document.getElementById('selPanel').innerHTML='<div style="font-size:11px;opacity:.4">Sticker seçip canvas\'a tıkla</div>';
-  });
-
-  layer.appendChild(el);
-  placed.push(entry);
-  selStk(entry);
-}
-
+// ── SEÇİLİ STICKER PANELİ ──
 function selStk(entry){
-  document.querySelectorAll('.placed-sticker').forEach(x=>{
-    x.style.outline='none';
-  });
-  entry.el.style.outline='2px solid var(--lime)';
   selPlaced=entry;
-
   const preview = entry.stk.isImage
-    ? `<img src="${entry.stk.url}" style="width:32px;height:32px;object-fit:contain;border-radius:4px;vertical-align:middle;margin-right:6px">`
+    ? `<img src="${entry.stk.url}" style="width:28px;height:28px;object-fit:contain;border-radius:4px;vertical-align:middle;margin-right:6px">`
     : `<span style="font-size:22px;vertical-align:middle;margin-right:6px">${entry.stk.e}</span>`;
 
-  document.getElementById('selPanel').innerHTML=`
+  const panel=document.getElementById('selPanel');
+  panel.innerHTML=`
     <div style="display:flex;align-items:center;margin-bottom:10px;font-size:12px;font-weight:700">${preview}Seçili Sticker</div>
     <div class="slider-row"><span>Boyut</span><span id="stkSzV">${Math.round(entry.scale*100)}%</span></div>
     <input type="range" id="stkSz" min="20" max="300" step="5" value="${entry.scale*100}">
     <div class="slider-row" style="margin-top:8px"><span>Döndür</span><span id="stkRtV">${entry.rot}°</span></div>
     <input type="range" id="stkRt" min="0" max="360" step="1" value="${entry.rot}">
-    <div style="font-size:10px;opacity:.35;margin-top:8px">Sürükle: taşı · Çift tıkla: sil</div>`;
+    <button class="btn" id="delStkBtn" style="margin-top:10px">🗑️ Bu Sticker'ı Sil</button>
+    <div style="font-size:10px;opacity:.35;margin-top:8px">Yerleştirilen sticker'a tıklayıp sürükleyerek yüzeyde taşı</div>`;
 
   document.getElementById('stkSz').oninput=function(){
-    const pct=parseInt(this.value);
-    const v=pct/100;
-    document.getElementById('stkSzV').textContent=pct+'%';
-    const base = entry.stk.isImage ? 80 : 60;
-    entry.el.style.width =(base*v)+'px';
-    entry.el.style.height=(base*v)+'px';
-    if(!entry.stk.isImage) entry.el.style.fontSize=(52*v)+'px';
-    entry.scale=v;
+    entry.scale=parseInt(this.value)/100;
+    document.getElementById('stkSzV').textContent=Math.round(entry.scale*100)+'%';
+    applyStickerTransform(entry);
   };
-
   document.getElementById('stkRt').oninput=function(){
-    const v=parseInt(this.value);
-    document.getElementById('stkRtV').textContent=v+'°';
-    entry.el.style.transform=`rotate(${v}deg)`;
-    entry.rot=v;
+    entry.rot=parseInt(this.value);
+    document.getElementById('stkRtV').textContent=entry.rot+'°';
+    applyStickerTransform(entry);
   };
+  document.getElementById('delStkBtn').onclick=()=>removeSticker(entry);
 }
 
-// Sticker layer — pointer-events aktif olsun
-document.getElementById('stickerLayer').style.pointerEvents='all';
+// Sticker layer — boş alan tıklamaları altındaki canvas'a geçsin.
+// Sadece yerleştirilen sticker'lar pointer-events:all olur (placeStk içinde).
+// 'all' yaparsak katman tüm olayları yutar → döndürme VE sticker ekleme bozulur.
+document.getElementById('stickerLayer').style.pointerEvents='none';
 
 
 function placeStk_old(){} // eski — yukarıda yeniden yazıldı
@@ -1397,14 +1466,13 @@ document.getElementById('lightInt').addEventListener('input',function(){
   ambientLight.intensity=v;dirLight.intensity=v;
 });
 document.getElementById('clearBtn').addEventListener('click',()=>{
-  document.getElementById('stickerLayer').innerHTML='';placed=[];
-  document.getElementById('selPanel').innerHTML='<p class="empty-msg">Yüzeye bir sticker ekle.</p>';
+  clearStickers();
 });
 document.getElementById('orderBtn').addEventListener('click',()=>{
   if(!placed.length){alert('Önce yüzeye sticker ekle.');return;}
   renderer.render(scene,camera);
   const list=placed.map(p=>p.stk.l).join(', ');
-  alert('Tasarımın kaydedildi!\n\nSticker: '+list+'\n\nGerçek sistemde: görüntü SOULCUT\'a gönderilir, 24 saatte üretilir.');
+  alert('Tasarımın kaydedildi!\n\nSticker: '+list+'\n\nGerçek sistemde: görüntü StickerLab\'a gönderilir, 24 saatte üretilir.');
 });
 
 // init

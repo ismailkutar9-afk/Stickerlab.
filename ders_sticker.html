@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ders Sticker Üretici — YAPIŞKAN</title>
+<title>Ders Sticker Üretici — StickerLab</title>
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Familjen+Grotesk:wght@400;600;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#FFF8E7;--ink:#1A1A1A;--hot:#FF3D5A;--lime:#C8FF3D;--sky:#4DCBFF;--plum:#6E2BFF;--cream:#FFEDB8;--paper:#FFFDF5;--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
@@ -22,7 +22,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 /* HERO */
 .hero{background:var(--ink);color:var(--bg);padding:72px 60px 56px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.04) 1px,transparent 0);background-size:22px 22px;pointer-events:none}
-.hero-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:56px;align-items:center;position:relative}
+.hero-in{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:56px;align-items:center;position:relative}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--lime);color:var(--ink);font-family:'Bowlby One';font-size:11px;letter-spacing:2px;padding:7px 16px;border:2px solid var(--lime);border-radius:999px;margin-bottom:20px}
 .hero h1{font-family:'Bowlby One';font-size:clamp(44px,6vw,80px);line-height:.85;letter-spacing:-3px;margin-bottom:18px}
 .hero h1 .lime{color:var(--lime)}
@@ -59,7 +59,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 
 /* SONUÇ — GÖRSEL GRID */
 .result-sec{display:none;padding:56px 60px}
-.result-in{max-width:1280px;margin:0 auto}
+.result-in{max-width:1600px;margin:0 auto}
 .result-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px}
 .result-top h2{font-family:'Bowlby One';font-size:clamp(24px,3.5vw,40px);letter-spacing:-1px}
 .result-top h2 span{color:var(--hot)}
@@ -266,7 +266,7 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;b
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="index.html" class="logo">YAPIŞ<span>KAN.</span></a>
+  <a href="index.html" class="logo">Sticker<span>Lab.</span></a>
   <div class="nav-right">
     <button class="back-btn" onclick="history.back()">← Geri</button>
     <button class="cart-btn" onclick="openCart()">🛒 <div class="cart-dot" id="cartDot">0</div></button>
