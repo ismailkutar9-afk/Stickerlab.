@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Studio — StickerLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Familjen+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── 3D STUDİO — StickerLab Teması ── */
+:root{--bg:#FFF8E7;--ink:#1A1A1A;--hot:#FF3D5A;--lime:#C8FF3D;--sky:#4DCBFF;--plum:#6E2BFF;--cream:#FFEDB8;--paper:#FFFDF5}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#0d0d0d;color:#F2EFE9;font-family:'Familjen Grotesk',sans-serif;height:100%;overflow:hidden}
+a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;border:none;background:none}
+/* NAV */
+.yl-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;border-bottom:2px solid rgba(255,255,255,.08);background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);position:fixed;top:0;left:0;right:0;z-index:200;height:52px}
+.yl-logo{font-family:'Bowlby One';font-size:22px;letter-spacing:-1px;transform:rotate(-2deg);display:inline-block}.yl-logo span{color:var(--hot)}
+.yl-nav-right{display:flex;align-items:center;gap:10px}
+.yl-badge{background:var(--lime);color:var(--ink);font-family:'Bowlby One';font-size:11px;padding:5px 12px;border-radius:999px;letter-spacing:1px}
+.yl-back{font-weight:700;font-size:12px;border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;cursor:pointer;color:#fff;transition:all .2s}.yl-back:hover{border-color:#fff}
+/* WORKSPACE */
+.workspace{display:grid;grid-template-columns:260px 1fr 220px;height:100vh;padding-top:52px}
+/* LEFT PANEL */
+.panel{background:#111;border-right:1px solid rgba(255,255,255,.08);overflow-y:auto;display:flex;flex-direction:column}
+.panel-title{padding:14px 18px 10px;font-family:'Bowlby One';font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+/* SURFACE GRID */
+.surface-section{padding:12px}
+.surf-cat-tabs{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.surf-cat-tab{
+  padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;
+  cursor:pointer;text-align:left;color:rgba(255,255,255,.5);
+  background:transparent;border:1px solid transparent;transition:all .15s;
+}
+.surf-cat-tab:hover{color:#fff;background:rgba(255,255,255,.06)}
+.surf-cat-tab.active{color:var(--lime);background:rgba(200,255,61,.1);border-color:rgba(200,255,61,.2)}
+.surface-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.surf-opt{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 8px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:24px}
+.surf-opt span{font-size:11px;font-weight:700;opacity:.6}
+.surf-opt:hover{border-color:var(--lime);background:rgba(200,255,61,.08)}
+.surf-opt.active{border-color:var(--lime);background:rgba(200,255,61,.12)}
+/* UPLOAD */
+.upload-mini{display:inline-flex;align-items:center;gap:7px;margin:2px 12px 4px;padding:6px 11px;
+  border:1.5px dashed rgba(255,255,255,.22);border-radius:10px;cursor:pointer;position:relative;
+  font-size:11.5px;font-weight:700;color:rgba(255,255,255,.7);background:rgba(255,255,255,.03);transition:all .18s}
+.upload-mini:hover{border-color:var(--lime);color:#fff;background:rgba(200,255,61,.06)}
+.upload-mini input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-mini .ic{font-size:15px;line-height:1}
+#modelInfo{padding:8px 12px;margin:0 12px;font-size:11px;color:var(--lime);background:rgba(200,255,61,.08);border-radius:8px;display:none}
+/* STICKER UPLOAD */
+/* STİCKER KATEGORİ TABLARI */
+.stk-cat-tabs{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px 4px}
+.stk-cat-btn{
+  padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700;
+  cursor:pointer;border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.45);background:transparent;transition:all .15s;
+}
+.stk-cat-btn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.stk-cat-btn.active{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+
+
+.sticker-scroll{flex:1;overflow-y:auto;padding:12px}
+.sticker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stk-item{aspect-ratio:1;border:2px solid rgba(255,255,255,.1);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.03);gap:2px}
+.stk-item span.lbl{font-size:9px;opacity:.5}
+.stk-item:hover{border-color:var(--hot);background:rgba(255,61,90,.08);transform:scale(1.05)}
+.stk-item.sel{border-color:var(--hot);background:rgba(255,61,90,.15)}
+/* CANVAS */
+.canvas-wrap{position:relative;background:linear-gradient(135deg,#0a0a0a 0%,#141428 50%,#0a0a0a 100%)}
+#three-canvas{width:100%;height:100%;display:block}
+.canvas-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:rgba(255,255,255,.5);font-size:11px;font-weight:700;padding:7px 16px;border-radius:999px;letter-spacing:.5px;white-space:nowrap;pointer-events:none}
+.sticker-layer{position:absolute;inset:0;pointer-events:none;}
+.placed-sticker{position:absolute;cursor:move;user-select:none;pointer-events:all;}
+/* CONTROLS */
+.controls{background:#111;border-left:1px solid rgba(255,255,255,.08);overflow-y:auto}
+.ctrl-sec{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.ctrl-label{font-family:'Bowlby One';font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:12px}
+/* COLORS */
+#colorPresets{display:flex;gap:6px;flex-wrap:wrap}
+.cp{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s}.cp:hover{transform:scale(1.2)}.cp.sel{border-color:#fff}
+/* SLIDERS */
+input[type=range]{width:100%;accent-color:var(--lime);margin:6px 0}
+.slider-row{display:flex;align-items:center;justify-content:space-between;font-size:11px;opacity:.5;margin-bottom:4px}
+/* BUTTONS */
+.btn{width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;margin-bottom:6px}
+.btn:hover{background:rgba(255,255,255,.15)}
+.btn.primary{background:var(--hot);border-color:var(--hot)}
+.btn.primary:hover{background:#d42d44}
+/* PLACED LIST */
+#selPanel{padding:12px 16px}
+.placed-lbl{font-size:10px;opacity:.4;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.order-note{font-size:11px;opacity:.4;line-height:1.5;margin-top:8px}
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--lime);color:var(--ink);padding:10px 22px;border-radius:999px;font-weight:700;font-size:13px;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<nav class="yl-nav">
+  <a href="index.html" class="yl-logo">Sticker<span>Lab.</span></a>
+  <div class="yl-nav-right">
+    <div class="yl-badge">🎮 3D STUDİO</div>
+    <button class="yl-back" onclick="history.back()">← Geri</button>
+  </div>
+</nav>
+
+<div class="workspace">
+
+  <!-- SOL PANEL -->
+  <div class="panel">
+    <div class="panel-title">Yüzey Seç</div>
+    <div class="surface-section">
+      <div class="surf-cat-tabs" id="surfCatTabs"></div>
+      <div class="surface-grid" id="surfaceGrid"></div>
+    </div>
+
+    <div class="panel-title">3D Model Yükle</div>
+    <label class="upload-mini" id="uploadZone" title="Kendi GLB / GLTF modelini yükle (veya canvas'a sürükle)">
+      <input type="file" id="modelFile" accept=".glb,.gltf">
+      <span class="ic">⬆️</span><span>GLB / GLTF</span>
+    </label>
+    <div id="modelInfo"></div>
+
+    <div class="panel-title">Tasarımların</div>
+    <div class="stk-cat-tabs" id="stkCatTabs"></div>
+    <div class="sticker-scroll">
+      <div class="sticker-grid" id="stickerGrid"></div>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="three-canvas"></canvas>
+    <div class="sticker-layer" id="stickerLayer"></div>
+    <div class="canvas-hint" id="canvasHint">SÜRÜKLE: DÖNDÜR &nbsp;·&nbsp; SCROLL: ZOOM &nbsp;·&nbsp; STİCKER SEÇ + CANVAS'A TIKLA: EKLE</div>
+  </div>
+
+  <!-- SAĞ KONTROL -->
+  <div class="controls">
+    <div class="ctrl-sec">
+      <div class="ctrl-label">Yüzey Rengi</div>
+      <div id="colorPresets"></div>
+    </div>
+
+    <div class="ctrl-sec">
+      <div class="ctrl-label">Işık Şiddeti</div>
+      <div class="slider-row"><span>Az</span><span id="lightVal">1.2</span><span>Çok</span></div>
+      <input type="range" id="lightInt" min="0" max="3" step="0.1" value="1.2">
+    </div>
+
+    <div class="ctrl-sec">
+      <div class="ctrl-label">Otomatik Dönüş</div>
+      <div class="slider-row"><span>Yavaş</span><span id="rotVal">0</span><span>Hızlı</span></div>
+      <input type="range" id="rotateY" min="0" max="5" step="0.1" value="0">
+    </div>
+
+    <div class="ctrl-sec">
+      <div class="ctrl-label">Seçili Sticker</div>
+      <div id="selPanel">
+        <div class="ctrl-label" style="font-size:10px;opacity:.4">Sticker seçip canvas'a tıkla</div>
+        <div class="slider-row" style="margin-top:8px"><span>Boyut</span><span id="stkSzV">80</span></div>
+        <input type="range" id="stkSz" min="20" max="200" value="80">
+        <div class="slider-row"><span>Döndür</span><span id="stkRtV">0°</span></div>
+        <input type="range" id="stkRt" min="-180" max="180" value="0">
+      </div>
+    </div>
+
+    <div class="ctrl-sec">
+      <div class="ctrl-label">İşlemler</div>
+      <button class="btn" id="clearBtn">🗑️ Tümünü Temizle</button>
+      <button class="btn primary" id="orderBtn">📸 Kaydet & Sipariş</button>
+      <div class="order-note">Tasarımını kaydet, StickerLab'a gönder. 24 saatte üretelim.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+
+// ── SURFACE KATEGORİLERİ ──
+const SURFACE_CATS = [
+  {
+    id:'gaming', label:'🎮 Gaming Setup', items:[
+      {e:"🖥️", n:"Flat Monitör",    geo:"box", dim:[2.6,1.5,0.08]},
+      {e:"🖥️", n:"Curved Monitör",  geo:"box", dim:[2.8,1.6,0.08]},
+      {e:"🖥️", n:"Ultrawide",       geo:"box", dim:[3.6,1.5,0.08]},
+      {e:"🖲️", n:"Mouse Pad XL",    geo:"box", dim:[2.8,0.015,1.2]},
+      {e:"🗼", n:"Mini ITX Kasa",   geo:"box", dim:[0.8,1.2,1.0]},
+      {e:"🗼", n:"Mid Tower Kasa",  geo:"box", dim:[1.0,1.8,1.4]},
+      {e:"🗼", n:"Full Tower Kasa", geo:"box", dim:[1.2,2.2,1.6]},
+      {e:"🐠", n:"Akvaryum Kasa",   geo:"box", dim:[1.0,1.8,1.4]},
+    ]
+  },
+  {
+    id:'laptop', label:'💻 Laptop & Tablet', items:[
+      {e:"💻", n:"Laptop 15\"",   geo:"box",  dim:[2.2,0.1,1.5]},
+      {e:"💻", n:"Laptop 13\"",   geo:"box",  dim:[1.9,0.08,1.3]},
+      {e:"💻", n:"Pro Laptop",   geo:"box",  dim:[2.0,0.06,1.35]},
+      {e:"📱", n:"Tablet Pro",      geo:"box",  dim:[1.2,1.6,0.06]},
+      {e:"📱", n:"Tablet 11\"",   geo:"box",  dim:[1.3,1.7,0.07]},
+      {e:"📓", n:"Notebook",      geo:"box",  dim:[1.8,0.06,1.4]},
+    ]
+  },
+  {
+    id:'phone', label:'📱 Telefon & Aksesuar', items:[
+      {e:"📱", n:"Telefon Pro", geo:"box",  dim:[0.65,1.35,0.06]},
+      {e:"📱", n:"Telefon XL",    geo:"box",  dim:[0.7,1.5,0.07]},
+      {e:"📱", n:"Flip Telefon",  geo:"box",  dim:[0.6,0.8,0.07]},
+      {e:"⌚", n:"Akıllı Saat",   geo:"box",  dim:[0.45,0.55,0.12]},
+      {e:"🎧", n:"AirPods Kutu",  geo:"box",  dim:[0.55,0.7,0.3]},
+      {e:"🔋", n:"Powerbank",     geo:"box",  dim:[0.5,0.3,1.1]},
+    ]
+  },
+  {
+    id:'daily', label:'☕ Günlük Kullanım', items:[
+      {e:"☕", n:"Termos",        geo:"cyl",  dim:[0.55,0.45,1.6]},
+      {e:"🍶", n:"Şişe",          geo:"cyl",  dim:[0.5,0.5,2.0]},
+      {e:"📦", n:"Kargo Kutu",    geo:"box",  dim:[1.8,1.2,1.2]},
+      {e:"🎒", n:"Sırt Çantası",  geo:"box",  dim:[1.0,1.4,0.5]},
+      {e:"📔", n:"Defter A5",     geo:"box",  dim:[1.2,0.06,1.7]},
+      {e:"📔", n:"Defter A4",     geo:"box",  dim:[1.6,0.06,2.2]},
+      {e:"🪖", n:"Baret/Kask",    geo:"sph",  dim:[0.9,0.9,0.9]},
+      {e:"🛁", n:"Küvet Duvarı",  geo:"box",  dim:[2.0,1.2,0.06]},
+      {e:"🪞", n:"Ayna",          geo:"box",  dim:[1.2,1.8,0.04]},
+      {e:"☕", n:"Kupa",          geo:"cyl",  dim:[0.5,0.5,0.8]},
+    ]
+  },
+];
+
+// Aktif kategori
+let activeCatId = 'gaming';
+let SURFACES = SURFACE_CATS[0].items;
+
+// ── STİCKER KATALOğU — KATEGORİLİ ──
+const STICKER_CATS = [
+  {
+    id:'all', label:'Tümü',
+    items:[
+      {e:"⚡",l:"Şimşek"},{e:"🔥",l:"Ateş"},{e:"💀",l:"Skull"},
+      {e:"🌙",l:"Ay"},{e:"⭐",l:"Yıldız"},{e:"🌊",l:"Dalga"},
+      {e:"🎮",l:"Oyun"},{e:"👾",l:"Pixel"},{e:"🚀",l:"Roket"},
+      {e:"💪",l:"Güç"},{e:"🐉",l:"Ejder"},{e:"🦊",l:"Tilki"},
+    ]
+  },
+  {
+    id:'dark', label:'🖤 Dark',
+    items:[
+      {e:"💀",l:"Skull"},{e:"🐉",l:"Dragon"},{e:"🌙",l:"Moon"},
+      {e:"🔮",l:"Mystic"},{e:"🐺",l:"Wolf"},{e:"👁️",l:"Eye"},
+      {e:"🌀",l:"Spiral"},{e:"⚰️",l:"Coffin"},{e:"🦇",l:"Bat"},
+      {e:"🕷️",l:"Spider"},{e:"🖤",l:"Black"},{e:"☠️",l:"Danger"},
+      {e:"🌑",l:"Dark Moon"},{e:"🔱",l:"Trident"},{e:"⛧",l:"Star"},
+      {e:"🩸",l:"Drop"},{e:"🌫️",l:"Fog"},{e:"🪦",l:"Grave"},
+    ]
+  },
+  {
+    id:'gaming', label:'🎮 Gaming',
+    items:[
+      {e:"🎮",l:"Gamepad"},{e:"👾",l:"Pixel"},{e:"⚔️",l:"Sword"},
+      {e:"🏆",l:"Trophy"},{e:"🎯",l:"Target"},{e:"💣",l:"Bomb"},
+      {e:"🛡️",l:"Shield"},{e:"🗡️",l:"Dagger"},{e:"🔫",l:"Gun"},
+      {e:"💊",l:"Health"},{e:"⚡",l:"Speed"},{e:"🌟",l:"Power"},
+      {e:"🕹️",l:"Joystick"},{e:"🎲",l:"Dice"},{e:"🃏",l:"Card"},
+      {e:"🔓",l:"Unlock"},{e:"💎",l:"Gem"},{e:"🏅",l:"Medal"},
+    ]
+  },
+  {
+    id:'cyber', label:'⚡ Cyber',
+    items:[
+      {e:"⚡",l:"Electric"},{e:"🤖",l:"Robot"},{e:"💻",l:"PC"},
+      {e:"🔋",l:"Battery"},{e:"📡",l:"Signal"},{e:"🛸",l:"UFO"},
+      {e:"🌐",l:"Net"},{e:"💾",l:"Data"},{e:"🔬",l:"Lab"},
+      {e:"⚙️",l:"Gear"},{e:"🔩",l:"Bolt"},{e:"🧬",l:"DNA"},
+      {e:"🕶️",l:"Visor"},{e:"📟",l:"Beeper"},{e:"🖥️",l:"Screen"},
+      {e:"🔭",l:"Scope"},{e:"💡",l:"Idea"},{e:"🧪",l:"Test"},
+    ]
+  },
+  {
+    id:'nature', label:'🌿 Doğa',
+    items:[
+      {e:"🌊",l:"Wave"},{e:"🔥",l:"Fire"},{e:"⚡",l:"Thunder"},
+      {e:"🌸",l:"Cherry"},{e:"🍄",l:"Mushroom"},{e:"🌿",l:"Leaf"},
+      {e:"🌙",l:"Moon"},{e:"☀️",l:"Sun"},{e:"⭐",l:"Star"},
+      {e:"🌈",l:"Rainbow"},{e:"❄️",l:"Ice"},{e:"🌋",l:"Volcano"},
+      {e:"🐍",l:"Snake"},{e:"🦅",l:"Eagle"},{e:"🐺",l:"Wolf"},
+      {e:"🦁",l:"Lion"},{e:"🐯",l:"Tiger"},{e:"🦊",l:"Fox"},
+    ]
+  },
+  {
+    id:'kawaii', label:'🌸 Kawaii',
+    items:[
+      {e:"🌸",l:"Sakura"},{e:"🐱",l:"Cat"},{e:"🐰",l:"Bunny"},
+      {e:"🐻",l:"Bear"},{e:"🌈",l:"Rainbow"},{e:"⭐",l:"Star"},
+      {e:"🍰",l:"Cake"},{e:"🎀",l:"Ribbon"},{e:"💖",l:"Love"},
+      {e:"🍭",l:"Candy"},{e:"🦄",l:"Unicorn"},{e:"🌺",l:"Flower"},
+      {e:"🎵",l:"Music"},{e:"✨",l:"Sparkle"},{e:"💫",l:"Dizzy"},
+      {e:"🧁",l:"Cupcake"},{e:"🍬",l:"Sweet"},{e:"🎊",l:"Party"},
+    ]
+  },
+  {
+    id:'street', label:'🎨 Street',
+    items:[
+      {e:"✌️",l:"Peace"},{e:"🤙",l:"Shaka"},{e:"👊",l:"Fist"},
+      {e:"🤘",l:"Rock"},{e:"🖕",l:"Middle"},{e:"🤞",l:"Cross"},
+      {e:"💯",l:"100"},{e:"🔥",l:"Fire"},{e:"💥",l:"Bang"},
+      {e:"🎭",l:"Drama"},{e:"🎪",l:"Show"},{e:"🎨",l:"Art"},
+      {e:"🏴",l:"Flag"},{e:"⚠️",l:"Warning"},{e:"🚫",l:"No"},
+      {e:"☢️",l:"Radio"},{e:"☣️",l:"Bio"},{e:"🆘",l:"SOS"},
+    ]
+  },
+  {
+    id:'symbols', label:'✦ Sembol',
+    items:[
+      {e:"∞",l:"Sonsuz"},{e:"☯️",l:"Yin Yang"},{e:"⚜️",l:"Fleur"},
+      {e:"🔱",l:"Trident"},{e:"⚡",l:"Bolt"},{e:"✦",l:"Star4"},
+      {e:"☸️",l:"Wheel"},{e:"🔯",l:"Star6"},{e:"✡️",l:"Star7"},
+      {e:"☪️",l:"Crescent"},{e:"♾️",l:"Infinite"},{e:"⚛️",l:"Atom"},
+      {e:"🕉️",l:"Om"},{e:"✝️",l:"Cross"},{e:"☦️",l:"Cross2"},
+      {e:"☠️",l:"Skull"},{e:"⚗️",l:"Alchemy"},{e:"🧿",l:"Evil Eye"},
+    ]
+  },
+];
+
+// Aktif sticker kategorisi
+let activeStkCat = 'all';
+
+function renderStkCatTabs(){
+  const tabs = document.getElementById('stkCatTabs');
+  if(!tabs) return;
+  tabs.innerHTML = STICKER_CATS.map(c=>`
+    <button class="stk-cat-btn${c.id===activeStkCat?' active':''}"
+      onclick="selectStkCat('${c.id}')">${c.label}</button>
+  `).join('');
+}
+
+function selectStkCat(id){
+  activeStkCat = id;
+  renderStkCatTabs();
+  renderStickerGrid();
+}
+
+function renderStickerGrid(){
+  const grid = document.getElementById('stickerGrid');
+  if(!grid) return;
+  const cat = STICKER_CATS.find(c=>c.id===activeStkCat) || STICKER_CATS[0];
+  grid.innerHTML = '';
+  if(!cat){
+    grid.innerHTML = '<div style="opacity:.45;font-size:12px;padding:24px 10px;text-align:center;grid-column:1/-1;line-height:1.6">Favorilerinden <b>“🎮 3D’de Gör”</b> ile bir tasarım gönder; burada görünür.</div>';
+    return;
+  }
+  cat.items.forEach(s=>{
+    const d = document.createElement('div');
+    d.className = 'stk-item';
+    d.innerHTML = `${s.e}<span class="lbl">${s.l}</span>`;
+    d.addEventListener('click',()=>{
+      document.querySelectorAll('.stk-item').forEach(x=>x.classList.remove('sel'));
+      d.classList.add('sel');
+      selectedSticker = s;
+      showToast(`${s.e} seçildi — modele tıkla`);
+    });
+    grid.appendChild(d);
+  });
+}
+
+// STICKERS eski uyumluluk
+const STICKERS = (STICKER_CATS[0] && STICKER_CATS[0].items) || [];
+// Emoji sticker kütüphanesi kaldırıldı — sadece gönderilen gerçek tasarımlar / yüklenen görseller gösterilir
+STICKER_CATS.length = 0;
+
+
+const COLORS=['#1a1a1a','#2d2d2d','#E8322A','#D4A843','#F2EFE9','#185FA5','#534AB7','#0F6E56','#72243E','#ff6b35','#00d4aa','#ff3d91'];
+
+let selectedSticker=null, placed=[], selPlaced=null;
+let scene,camera,renderer,modelMesh,ambientLight,dirLight;
+let isDragModel=false, prevMouse={x:0,y:0};
+let isDragStk=false;
+let modelLoaded=false;
+
+// ── KATEGORİ TABLARI ──
+function renderCatTabs(){
+  const tabs = document.getElementById('surfCatTabs');
+  if(!tabs) return;
+  tabs.innerHTML = SURFACE_CATS.map(cat=>`
+    <button class="surf-cat-tab${cat.id===activeCatId?' active':''}"
+      onclick="selectSurfCat('${cat.id}')">
+      ${cat.label} <span style="opacity:.4;font-size:10px">${cat.items.length}</span>
+    </button>
+  `).join('');
+}
+
+function selectSurfCat(id){
+  activeCatId = id;
+  const cat = SURFACE_CATS.find(c=>c.id===id);
+  if(!cat) return;
+  SURFACES = cat.items;
+  renderCatTabs();
+  renderSurfaceGrid();
+}
+
+function renderSurfaceGrid(){
+  const sg = document.getElementById('surfaceGrid');
+  if(!sg) return;
+  sg.innerHTML='';
+  SURFACES.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='surf-opt'+(i===0?' active':'');
+    d.innerHTML=`<span style="font-size:22px">${s.e}</span><span>${s.n}</span>`;
+    d.addEventListener('click',()=>{
+      document.querySelectorAll('.surf-opt').forEach(x=>x.classList.remove('active'));
+      d.classList.add('active');
+      loadPrimitive(s);
+    });
+    sg.appendChild(d);
+  });
+  // İlk yüzeyi yükle
+  if(SURFACES[0] && scene) loadPrimitive(SURFACES[0]);
+}
+
+// ── BUILD UI ──
+// NOT: renderCatTabs ve renderSurfaceGrid BUILDERS'dan sonra çağrılıyor
+// Sticker grid de BUILDERS sonrası renderlanacak
+
+const cp=document.getElementById('colorPresets');
+COLORS.forEach((c,i)=>{
+  const sw=document.createElement('div');
+  sw.className='cp'+(i===0?' sel':'');
+  sw.style.background=c;
+  sw.title=c;
+  sw.addEventListener('click',()=>{
+    document.querySelectorAll('.cp').forEach(x=>x.classList.remove('sel'));
+    sw.classList.add('sel');
+    applyColor(c);
+  });
+  cp.appendChild(sw);
+});
+
+// ── THREE SETUP ──
+const canvasEl=document.getElementById('three-canvas');
+const wrap=document.getElementById('canvasWrap');
+renderer=new THREE.WebGLRenderer({canvas:canvasEl,antialias:true,alpha:true});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x000000,0);
+scene=new THREE.Scene();
+camera=new THREE.PerspectiveCamera(45,1,0.01,1000);
+camera.position.set(0,0,4);
+ambientLight=new THREE.AmbientLight(0xffffff,1.4);
+scene.add(ambientLight);
+dirLight=new THREE.DirectionalLight(0xffffff,2);
+dirLight.position.set(5,5,5);
+scene.add(dirLight);
+const back=new THREE.DirectionalLight(0xE8322A,0.4);
+back.position.set(-5,-3,-5);
+scene.add(back);
+
+function resize(){
+  const w=wrap.clientWidth,h=wrap.clientHeight;
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+resize();
+window.addEventListener('resize',resize);
+
+const gridHelper=new THREE.GridHelper(8,24,0x2a2a2a,0x1a1a1a);
+gridHelper.position.y=-1.2;
+scene.add(gridHelper);
+
+function animate(){
+  requestAnimationFrame(animate);
+  // Otomatik dönüş
+  const rv = parseFloat(document.getElementById('rotateY').value)||0;
+  if(modelMesh && rv>0) modelMesh.rotation.y += rv*0.002;
+  renderer.render(scene,camera);
+}
+animate();
+
+// NOT: renderSurfaceGrid() BUILDERS tanımlandıktan SONRA çağrılacak — aşağıya bak
+
+// ── DETAYLI 3D ŞABLON SİSTEMİ ──
+
+function matCreate(color=0x1a1a1a, rough=0.45, metal=0.55, opts={}){
+  return new THREE.MeshStandardMaterial({color, roughness:rough, metalness:metal, ...opts});
+}
+function box(w,h,d,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  m.position.set(x,y,z); m.rotation.set(rx,ry,rz); return m;
+}
+function cyl(rt,rb,h,seg=32,mat,x=0,y=0,z=0){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat);
+  m.position.set(x,y,z); return m;
+}
+function sph(r,mat,x=0,y=0,z=0){
+  const m=new THREE.Mesh(new THREE.SphereGeometry(r,32,32),mat);
+  m.position.set(x,y,z); return m;
+}
+
+// Her şablon bir Group döndürür
+const BUILDERS = {
+
+  // ── GAMİNG SETUP ──────────────────────────
+
+  'Flat Monitör': ()=>{
+    // Düz ekran — siyah panel, ince çerçeve, tek ayak
+    const g=new THREE.Group();
+    const panel = matCreate(0x050510,0.9,0.1);
+    const frame  = matCreate(0x181818,0.5,0.6);
+    const stand  = matCreate(0x222222,0.35,0.75);
+    const rgb    = matCreate(0xE8322A,0.2,0.95);
+    g.add(box(2.6,1.5,0.04,panel));                        // ekran
+    g.add(box(2.66,1.56,0.03,frame,0,0,-0.035));           // çerçeve
+    g.add(box(2.3,1.2,0.07,frame,0,0,-0.06));              // arka kasa
+    g.add(box(0.07,0.52,0.07,stand,0,-1.01,0));            // ayak kolu
+    g.add(box(0.55,0.04,0.28,stand,0,-1.29,0.08));         // taban
+    g.add(box(2.64,0.022,0.022,rgb,0,-0.76,-0.018));       // RGB alt çizgi
+    return g;
+  },
+
+  'Curved Monitör': ()=>{
+    // Kavisli ekran — 5 dilim hafif bükülmüş
+    const g=new THREE.Group();
+    const panel = matCreate(0x040410,0.9,0.1);
+    const frame  = matCreate(0x111111,0.45,0.65);
+    const stand  = matCreate(0x1a1a1a,0.3,0.8);
+    const rgb    = matCreate(0x4DCBFF,0.2,0.95);
+    for(let i=0;i<5;i++){
+      const t=(i/4-0.5);
+      const m=box(0.56,1.5,0.04,panel);
+      m.position.x=t*2.55; m.rotation.y=-t*0.16; g.add(m);
+    }
+    g.add(box(2.82,1.56,0.03,frame,0,0,-0.05));
+    g.add(box(2.4,1.2,0.09,frame,0,0,-0.085));
+    g.add(box(0.08,0.5,0.08,stand,0,-1.0,0));
+    g.add(box(0.65,0.04,0.32,stand,0,-1.27,0.09));
+    g.add(box(2.82,0.022,0.022,rgb,0,-0.77,-0.02));
+    return g;
+  },
+
+  'Ultrawide': ()=>{
+    // 21:9 geniş kavisli panel — 7 dilim
+    const g=new THREE.Group();
+    const panel = matCreate(0x030308,0.9,0.1);
+    const frame  = matCreate(0x0d0d0d,0.4,0.7);
+    const stand  = matCreate(0x181818,0.3,0.8);
+    const rgb    = matCreate(0x6E2BFF,0.2,0.95);
+    for(let i=0;i<7;i++){
+      const t=(i/6-0.5);
+      const m=box(0.54,1.44,0.04,panel);
+      m.position.x=t*3.3; m.rotation.y=-t*0.18; g.add(m);
+    }
+    g.add(box(3.72,1.5,0.03,frame,0,0,-0.05));
+    g.add(box(3.3,1.15,0.1,frame,0,0,-0.09));
+    g.add(box(0.1,0.44,0.08,stand,0,-0.96,0));
+    g.add(box(1.1,0.04,0.4,stand,0,-1.21,0.12));
+    g.add(box(3.72,0.022,0.022,rgb,0,-0.74,-0.025));
+    return g;
+  },
+
+'Akvaryum Kasa': ()=>{
+    // Tam şeffaf akvaryum kasa — sadece çerçeve + cam, içi BOŞ
+    const g = new THREE.Group();
+    const alum = matCreate(0x707070, 0.12, 0.95);
+    const glass = matCreate(0xaaddff, 0.02, 0.05, {transparent:true, opacity:0.12});
+    const rgb   = matCreate(0x4DCBFF, 0.1, 0.99);
+    const rgb2  = matCreate(0x6E2BFF, 0.1, 0.99);
+    const btn   = matCreate(0xffffff, 0.2, 0.8);
+
+    const ew=1.0, eh=1.8, ed=1.4, t=0.035;
+
+    // 12 kenar çubuğu (alüminyum profil)
+    // Üst 4
+    g.add(box(ew,t,t,alum,  0,  eh/2,  ed/2));
+    g.add(box(ew,t,t,alum,  0,  eh/2, -ed/2));
+    g.add(box(t,t,ed,alum,  ew/2, eh/2, 0));
+    g.add(box(t,t,ed,alum, -ew/2, eh/2, 0));
+    // Alt 4
+    g.add(box(ew,t,t,alum,  0, -eh/2,  ed/2));
+    g.add(box(ew,t,t,alum,  0, -eh/2, -ed/2));
+    g.add(box(t,t,ed,alum,  ew/2,-eh/2, 0));
+    g.add(box(t,t,ed,alum, -ew/2,-eh/2, 0));
+    // 4 dikey köşe
+    g.add(box(t,eh,t,alum,  ew/2, 0,  ed/2));
+    g.add(box(t,eh,t,alum, -ew/2, 0,  ed/2));
+    g.add(box(t,eh,t,alum,  ew/2, 0, -ed/2));
+    g.add(box(t,eh,t,alum, -ew/2, 0, -ed/2));
+
+    // 5 cam panel (ön+arka+sol+sağ+üst)
+    g.add(box(ew-t, eh-t, 0.008, glass,  0, 0,  ed/2+0.004)); // ön
+    g.add(box(ew-t, eh-t, 0.008, glass,  0, 0, -ed/2-0.004)); // arka
+    g.add(box(0.008, eh-t, ed-t, glass,  ew/2+0.004, 0, 0));  // sağ
+    g.add(box(0.008, eh-t, ed-t, glass, -ew/2-0.004, 0, 0));  // sol
+    g.add(box(ew-t, 0.008, ed-t, glass,  0,  eh/2+0.004, 0)); // üst
+
+    // RGB köşe şeritleri (iç)
+    g.add(box(0.014,eh-0.1,0.014, rgb,   ew/2-0.06, 0,  ed/2-0.06));
+    g.add(box(0.014,eh-0.1,0.014, rgb2, -ew/2+0.06, 0,  ed/2-0.06));
+    g.add(box(0.014,eh-0.1,0.014, rgb,   ew/2-0.06, 0, -ed/2+0.06));
+    g.add(box(0.014,eh-0.1,0.014, rgb2, -ew/2+0.06, 0, -ed/2+0.06));
+
+    // Power butonu üstte
+    g.add(cyl(0.026,0.026,0.022,16, btn, 0.35, eh/2+0.011, 0.3));
+
+    // Ayaklar
+    [[-0.38,-0.56],[0.38,-0.56],[-0.38,0.56],[0.38,0.56]].forEach(([x,z])=>
+      g.add(box(0.072,0.042,0.072,alum,x,-eh/2-0.021,z)));
+
+    return g;
+  },
+
+
+
+'Mouse Pad XL': ()=>{
+    // Geniş masa üstü mouse pad — dikişli kenar
+    const g=new THREE.Group();
+    const pad  = matCreate(0x080808,1.0,0.0);
+    const edge = matCreate(0xE8322A,0.7,0.05);
+    const bot  = matCreate(0x050505,1.0,0.0);
+    g.add(box(2.8,0.011,1.2,pad));
+    g.add(box(2.8,0.013,0.017,edge,0,0,-0.609));
+    g.add(box(2.8,0.013,0.017,edge,0,0, 0.609));
+    g.add(box(0.017,0.013,1.2,edge,-1.408,0,0));
+    g.add(box(0.017,0.013,1.2,edge, 1.408,0,0));
+    g.add(box(2.76,0.007,1.16,bot,0,-0.009,0));
+    g.add(box(0.32,0.012,0.11,matCreate(0x111111,0.9,0.0),-1.1,0,-0.47));
+    return g;
+  },
+
+  'Mini ITX Kasa': ()=>{
+    // Küçük form factor kasa — cam panel + RGB
+    const g=new THREE.Group();
+    const body = matCreate(0x0c0c0c,0.5,0.55);
+    const glass = matCreate(0x0a1520,0.04,0.05,{transparent:true,opacity:0.55});
+    const alum  = matCreate(0x505050,0.22,0.88);
+    const rgb   = matCreate(0x6E2BFF,0.18,0.95);
+    const btn   = matCreate(0xdddddd,0.3,0.7);
+    const fan   = matCreate(0x1a1a1a,0.7,0.3);
+    g.add(box(0.8,1.2,1.0,body));
+    g.add(box(0.016,1.15,0.95,glass,-0.408,0,0));
+    g.add(box(0.8,0.035,1.0,alum,0,0.618,0));
+    g.add(box(0.8,1.2,0.035,body,0,0,-0.518));
+    // Fan grili ön (3x3)
+    for(let r=-1;r<=1;r++) for(let cc=-1;cc<=1;cc++)
+      g.add(box(0.055,0.055,0.012,fan,cc*0.075,r*0.075,-0.523));
+    g.add(cyl(0.02,0.02,0.022,14,btn,0.27,0.52,-0.524));
+    g.add(box(0.055,0.022,0.012,alum,0.05,0.46,-0.524));
+    g.add(box(0.055,0.022,0.012,alum,-0.07,0.46,-0.524));
+    g.add(box(0.75,0.02,0.95,rgb,0,-0.588,0));
+    [[-0.28,-0.38],[0.28,-0.38],[-0.28,0.38],[0.28,0.38]].forEach(([x,z])=>
+      g.add(box(0.055,0.038,0.055,alum,x,-0.62,z)));
+    return g;
+  },
+
+  'Mid Tower Kasa': ()=>{
+    // Orta boy ATX kasa — büyük cam panel
+    const g=new THREE.Group();
+    const body = matCreate(0x090909,0.5,0.55);
+    const glass = matCreate(0x081220,0.04,0.05,{transparent:true,opacity:0.5});
+    const alum  = matCreate(0x404040,0.22,0.88);
+    const rgb   = matCreate(0xE8322A,0.18,0.95);
+    const btn   = matCreate(0xffffff,0.25,0.75);
+    const fan   = matCreate(0x181818,0.7,0.3);
+    g.add(box(1.0,1.8,1.4,body));
+    g.add(box(0.016,1.73,1.33,glass,-0.508,0,0));
+    g.add(box(1.0,0.036,1.4,alum,0,0.918,0));
+    g.add(box(1.0,1.8,0.036,body,0,0,-0.718));
+    // Ön fan (2x2)
+    for(let r=0;r<=1;r++) for(let cc=-1;cc<=1;cc++)
+      g.add(box(0.065,0.065,0.014,fan,cc*0.09,r*0.09-0.05,-0.723));
+    g.add(cyl(0.026,0.026,0.02,16,btn,0.36,0.87,-0.72));
+    g.add(cyl(0.012,0.012,0.016,12,matCreate(0x888888,0.4,0.5),0.22,0.87,-0.72));
+    g.add(box(0.11,0.038,0.016,alum,0.0,0.78,-0.72));
+    g.add(box(0.055,0.038,0.016,alum,-0.1,0.78,-0.72));
+    g.add(box(0.95,0.022,1.35,rgb,0,-0.908,0));
+    [[-0.37,-0.55],[0.37,-0.55],[-0.37,0.55],[0.37,0.55]].forEach(([x,z])=>
+      g.add(box(0.075,0.046,0.075,alum,x,-0.924,z)));
+    return g;
+  },
+
+  'Full Tower Kasa': ()=>{
+    // E-ATX full tower — çift cam panel, 3 RGB şerit
+    const g=new THREE.Group();
+    const body = matCreate(0x070707,0.45,0.6);
+    const glass = matCreate(0x060e18,0.04,0.05,{transparent:true,opacity:0.45});
+    const alum  = matCreate(0x383838,0.2,0.9);
+    const rgb   = matCreate(0x4DCBFF,0.18,0.95);
+    const btn   = matCreate(0xffffff,0.2,0.8);
+    const fan   = matCreate(0x141414,0.7,0.3);
+    g.add(box(1.2,2.2,1.6,body));
+    g.add(box(0.016,2.13,1.53,glass,-0.608,0,0));
+    g.add(box(1.2,0.036,1.6,alum,0,1.118,0));
+    g.add(box(1.2,2.2,0.036,body,0,0,-0.818));
+    // Ön fan (3x3)
+    for(let r=-1;r<=1;r++) for(let cc=-2;cc<=2;cc++)
+      g.add(box(0.07,0.07,0.014,fan,cc*0.1,r*0.1,-0.824));
+    g.add(cyl(0.034,0.034,0.022,20,btn,0.45,1.07,-0.822));
+    g.add(cyl(0.012,0.012,0.016,12,matCreate(0x999999,0.4,0.5),0.3,1.07,-0.822));
+    g.add(box(0.17,0.042,0.016,alum,0.0,0.96,-0.822));
+    g.add(box(0.065,0.042,0.016,alum,-0.14,0.96,-0.822));
+    // 3 RGB şerit
+    g.add(box(1.16,0.02,1.56,rgb,0,-1.108,0));
+    g.add(box(0.02,2.16,1.56,rgb,-0.598,0,0));
+    g.add(box(1.16,2.16,0.02,rgb,0,0,-0.81));
+    [[-0.44,-0.64],[0.44,-0.64],[-0.44,0.64],[0.44,0.64]].forEach(([x,z])=>
+      g.add(box(0.095,0.055,0.095,alum,x,-1.128,z)));
+    return g;
+  },
+
+
+
+// ── LAPTOP & TABLET ──────────────────────
+
+  'Laptop 15"': ()=>{
+    const g = new THREE.Group();
+    const alumMat   = matCreate(0x7a7a7a, 0.25, 0.85);
+    const screenMat = matCreate(0x030308, 0.9, 0.05);
+    const keyMat    = matCreate(0x111111, 0.9, 0.05);
+    const tpadMat   = matCreate(0x666666, 0.2, 0.8);
+    const hingeMat  = matCreate(0x444444, 0.2, 0.9);
+
+    // ── TABAN (alt yarı) ──
+    const base = new THREE.Group();
+    base.add(box(2.2, 0.06, 1.45, alumMat));                          // taban gövde
+    base.add(box(1.85, 0.008, 0.62, keyMat,   0,    0.034, -0.18));  // klavye alanı
+    base.add(box(0.62, 0.008, 0.38, tpadMat,  0,    0.034,  0.42));  // trackpad
+    base.add(box(0.62, 0.006, 0.38, matCreate(0x888888,0.15,0.85), 0, 0.036, 0.42)); // trackpad kenar
+    // Tuş satırları (4 basit şerit)
+    for(let i=0;i<4;i++)
+      base.add(box(1.8,0.005,0.1,matCreate(0x1a1a1a,0.9,0.05),0,0.035,-0.4+i*0.12));
+    // Speaker ızgara (iki yan)
+    base.add(box(0.25,0.005,0.06,matCreate(0x333333,0.8,0.2),-0.88,0.034,0.0));
+    base.add(box(0.25,0.005,0.06,matCreate(0x333333,0.8,0.2), 0.88,0.034,0.0));
+    // Ayaklar
+    [[-0.95,-0.62],[0.95,-0.62],[-0.95,0.62],[0.95,0.62]].forEach(([x,z])=>
+      base.add(box(0.12,0.014,0.08,matCreate(0x222222,0.9,0.0),x,-0.037,z)));
+    base.position.set(0, -0.42, 0.2);
+    g.add(base);
+
+    // ── MENTEŞE ──
+    g.add(box(0.55,0.045,0.045, hingeMat, 0, -0.39, -0.52));
+
+    // ── EKRAN KAPAĞI (ön tarafa bakıyor) ──
+    const lid = new THREE.Group();
+    lid.add(box(2.2, 1.38, 0.045, alumMat));                           // kapak gövde
+    lid.add(box(2.08, 1.26, 0.01, screenMat, 0, 0, 0.028));            // ekran
+    lid.add(cyl(0.018,0.018,0.018,16,matCreate(0x111111,0.5,0.5), 0, 0.63, 0.029)); // kamera
+    // Ekran kamera noktası LED
+    lid.add(cyl(0.006,0.006,0.019,8,matCreate(0x22aa22,0.3,0.8), -0.06, 0.63, 0.029));
+    // İnce çerçeve
+    lid.add(box(2.2,  0.04, 0.045, alumMat, 0, -0.69, 0));  // alt menteşe şeridi
+    lid.position.set(0, 0.27, -0.515);
+    lid.rotation.x = 0.18;  // hafif arkaya yatık (doğal açı)
+    g.add(lid);
+
+    return g;
+  },
+
+  'Pro Laptop': ()=>{
+    const g = new THREE.Group();
+    const alumMat   = matCreate(0x919191, 0.18, 0.92);
+    const screenMat = matCreate(0x020206, 0.9, 0.05);
+    const keyMat    = matCreate(0x0d0d0d, 0.9, 0.05);
+    const tpadMat   = matCreate(0x777777, 0.15, 0.85);
+    const hingeMat  = matCreate(0x555555, 0.15, 0.95);
+
+    // ── TABAN ──
+    const base = new THREE.Group();
+    base.add(box(2.0, 0.05, 1.35, alumMat));
+    base.add(box(1.7, 0.007, 0.58, keyMat, 0, 0.029, -0.16));
+    base.add(box(0.55, 0.007, 0.34, tpadMat, 0, 0.029, 0.38));
+    for(let i=0;i<4;i++)
+      base.add(box(1.65,0.004,0.09,matCreate(0x1a1a1a,0.9,0.05),0,0.028,-0.37+i*0.11));
+    [[-0.88,-0.58],[0.88,-0.58],[-0.88,0.58],[0.88,0.58]].forEach(([x,z])=>
+      base.add(box(0.1,0.012,0.07,matCreate(0x222222,0.9,0.0),x,-0.032,z)));
+    base.position.set(0, -0.38, 0.18);
+    g.add(base);
+
+    // ── MENTEŞE (sürekli ince) ──
+    g.add(box(0.5, 0.038, 0.038, hingeMat, 0, -0.35, -0.49));
+
+    // ── EKRAN ──
+    const lid = new THREE.Group();
+    lid.add(box(2.0, 1.28, 0.038, alumMat));
+    lid.add(box(1.88, 1.18, 0.009, screenMat, 0, 0, 0.024));
+    // Notch
+    lid.add(box(0.16, 0.045, 0.01, matCreate(0x000000,1,0), 0, 0.6, 0.025));
+    // Kamera
+    lid.add(cyl(0.014,0.014,0.016,16,matCreate(0x111111,0.5,0.5), 0, 0.6, 0.026));
+    lid.add(box(2.0, 0.035, 0.038, alumMat, 0, -0.64, 0));
+    lid.position.set(0, 0.255, -0.475);
+    lid.rotation.x = 0.15;
+    g.add(lid);
+
+    return g;
+  },
+
+  'Tablet Pro': ()=>{
+    const g=new THREE.Group();
+    const body=matCreate(0x888888,0.2,0.9);
+    const screen=matCreate(0x030308,0.8,0.1);
+    const cam=matCreate(0x111111,0.3,0.7);
+    g.add(box(1.2,1.6,0.06,body));
+    g.add(box(1.12,1.52,0.01,screen,0,0,0.04));
+    g.add(box(0.04,0.04,0.01,cam,-0.5,0.7,0.04));
+    // Apple Pencil yuvası
+    g.add(box(0.04,0.8,0.035,matCreate(0x999999,0.2,0.8),-0.62,0,0));
+    // Home yok (Face ID çizgisi)
+    g.add(box(0.08,0.006,0.01,matCreate(0x555555,0.5,0.5),0,0.75,0.04));
+    return g;
+  },
+
+  // ── TELEFON ──────────────────────────────
+
+  'Telefon Pro': ()=>{
+    const g=new THREE.Group();
+    const titan=matCreate(0x8a8070,0.15,0.95);
+    const screen=matCreate(0x030308,0.8,0.1);
+    const cam=matCreate(0x111111,0.2,0.8);
+    const camGlass=matCreate(0x050510,0.05,0.9);
+    g.add(box(0.65,1.35,0.065,titan));
+    g.add(box(0.61,1.31,0.01,screen,0,0,0.038));
+    // Dynamic Island
+    g.add(box(0.14,0.04,0.01,matCreate(0x000000,1,0),0,0.6,0.04));
+    // Kamera adası
+    const camIsland=new THREE.Group();
+    camIsland.position.set(-0.17,0.52,-0.04);
+    camIsland.add(box(0.28,0.28,0.015,matCreate(0x1a1a18,0.3,0.8)));
+    [[-0.07,-0.07],[0.07,-0.07],[-0.07,0.07]].forEach(([x,y])=>{
+      camIsland.add(cyl(0.055,0.055,0.02,24,cam,x,y,0));
+      camIsland.add(cyl(0.04,0.04,0.025,24,camGlass,x,y,0));
+    });
+    g.add(camIsland);
+    // Butonlar
+    g.add(box(0.02,0.12,0.01,titan,-0.335,0.2,0));
+    g.add(box(0.02,0.08,0.01,titan,-0.335,-0.1,0));
+    g.add(box(0.02,0.08,0.01,titan,-0.335,-0.22,0));
+    g.add(box(0.02,0.14,0.01,titan,0.335,0.05,0));
+    return g;
+  },
+
+  'Telefon XL': ()=>{
+    const g=new THREE.Group();
+    const body=matCreate(0x1a1a1a,0.3,0.7);
+    const screen=matCreate(0x020208,0.8,0.1);
+    g.add(box(0.7,1.5,0.072,body));
+    g.add(box(0.66,1.46,0.01,screen,0,0,0.041));
+    g.add(cyl(0.025,0.025,0.01,16,matCreate(0x111111,0.3,0.7),0,0.71,0.042));
+    const camIsland=new THREE.Group();
+    camIsland.position.set(0.2,0.55,-0.04);
+    [[-0.06,0],[0.06,0],[0,-0.09]].forEach(([x,y])=>{
+      camIsland.add(cyl(0.05,0.05,0.02,20,matCreate(0x111111,0.2,0.8),x,y,0));
+    });
+    g.add(camIsland);
+    return g;
+  },
+
+// ── GÜNDELİK ─────────────────────────────
+
+  'Termos': ()=>{
+    const g = new THREE.Group();
+    const body   = matCreate(0x1a1a1a, 0.3, 0.85);
+    const cap    = matCreate(0x2a2a2a, 0.35, 0.8);
+    const capTop = matCreate(0x333333, 0.4, 0.7);
+    const band   = matCreate(0xE8322A, 0.3, 0.7);
+    const base   = matCreate(0x111111, 0.5, 0.6);
+    // Gövde (hafif konik — üst biraz dar)
+    g.add(cyl(0.21,0.23,1.45,32,body));
+    // Alt taban
+    g.add(cyl(0.24,0.24,0.06,32,base,0,-0.755,0));
+    // Dekoratif bantlar
+    g.add(cyl(0.235,0.235,0.04,32,band,0,0.1,0));
+    g.add(cyl(0.235,0.235,0.04,32,band,0,-0.3,0));
+    // Boyun kısmı
+    g.add(cyl(0.13,0.21,0.12,32,body,0,0.785,0));
+    // Kapak
+    g.add(cyl(0.14,0.14,0.18,24,cap,0,0.915,0));
+    g.add(cyl(0.1,0.1,0.06,18,capTop,0,1.03,0));
+    // Içi görünüm (şeffaf değil, ama üst delik)
+    g.add(cyl(0.09,0.09,0.02,18,matCreate(0x050505,0.9,0.1),0,1.04,0));
+    // Logo bandı
+    g.add(box(0.01,0.3,0.32,band,0.23,0.1,0));
+    return g;
+  },
+
+  'Şişe': ()=>{
+    const g = new THREE.Group();
+    const bodyMat = matCreate(0x1a3a5c,0.08,0.05,{transparent:true,opacity:0.75});
+    const neck    = matCreate(0x1a3a5c,0.08,0.05,{transparent:true,opacity:0.75});
+    const cap     = matCreate(0x2255aa,0.4,0.5);
+    const label   = matCreate(0xffffff,0.85,0.0);
+    const base    = matCreate(0x152a40,0.2,0.1);
+    // Alt gövde (geniş)
+    g.add(cyl(0.23,0.22,1.2,32,bodyMat,0,-0.35,0));
+    // Omuz kısmı
+    g.add(cyl(0.14,0.23,0.22,32,bodyMat,0,0.31,0));
+    // Boyun (dar)
+    g.add(cyl(0.1,0.14,0.35,24,neck,0,0.595,0));
+    // Kapak
+    g.add(cyl(0.115,0.115,0.12,24,cap,0,0.83,0));
+    g.add(cyl(0.07,0.07,0.05,16,cap,0,0.925,0));
+    // Taban
+    g.add(cyl(0.24,0.24,0.05,32,base,0,-0.975,0));
+    // Etiket
+    g.add(cyl(0.235,0.235,0.45,32,label,0,-0.2,0));
+    // Etiket şerit
+    g.add(cyl(0.236,0.236,0.04,32,matCreate(0x3388ff,0.7,0.0),0,0.04,0));
+    g.add(cyl(0.236,0.236,0.04,32,matCreate(0x3388ff,0.7,0.0),0,-0.44,0));
+    return g;
+  },
+
+  'Defter A5': ()=>{
+    const g = new THREE.Group();
+    const cover  = matCreate(0xcc2211, 0.75, 0.05);
+    const back   = matCreate(0xaa1a0a, 0.75, 0.05);
+    const pages  = matCreate(0xf2ede0, 0.92, 0.0);
+    const spiral = matCreate(0x888888, 0.2, 0.85);
+    const ribbon = matCreate(0xE8322A, 0.6, 0.0);
+    // Arka kapak
+    g.add(box(1.2,0.02,1.7,back,0,-0.04,0));
+    // Sayfalar
+    g.add(box(1.16,0.05,1.66,pages,0,0,0));
+    // Ön kapak
+    g.add(box(1.2,0.02,1.7,cover,0,0.035,0));
+    // Spiral tel (10 halka)
+    for(let i=0;i<10;i++)
+      g.add(cyl(0.025,0.025,0.13,12,spiral,-0.52+i*0.12,0.01,0,Math.PI/2,0,0));
+    // Yer imi şeridi
+    g.add(box(0.025,0.02,0.4,ribbon,0.5,0.04,0.95));
+    // Kapak çizgi detayı
+    g.add(box(0.8,0.022,0.015,matCreate(0xaa1a0a,0.7,0.0),0,0.037,0.7));
+    return g;
+  },
+
+  'Defter A4': ()=>{
+    const g = new THREE.Group();
+    const cover  = matCreate(0x1a2a4a, 0.75, 0.05);
+    const back   = matCreate(0x111a30, 0.75, 0.05);
+    const pages  = matCreate(0xf2ede0, 0.92, 0.0);
+    const spiral = matCreate(0x888888, 0.2, 0.85);
+    const ribbon = matCreate(0x4DCBFF, 0.6, 0.0);
+    g.add(box(1.6,0.02,2.2,back,0,-0.055,0));
+    g.add(box(1.56,0.06,2.16,pages,0,0,0));
+    g.add(box(1.6,0.02,2.2,cover,0,0.04,0));
+    for(let i=0;i<12;i++)
+      g.add(cyl(0.028,0.028,0.15,12,spiral,-0.69+i*0.125,0.015,0,Math.PI/2,0,0));
+    g.add(box(0.025,0.025,0.5,ribbon,0.72,0.055,1.1));
+    g.add(box(1.0,0.022,0.015,matCreate(0x111a30,0.7,0.0),0,0.042,0.9));
+    return g;
+  },
+
+  'Sırt Çantası': ()=>{
+    const g = new THREE.Group();
+    const body   = matCreate(0x111111, 0.75, 0.1);
+    const front  = matCreate(0x0d0d0d, 0.8, 0.08);
+    const strap  = matCreate(0x1a1a1a, 0.8, 0.1);
+    const zip    = matCreate(0x555555, 0.3, 0.7);
+    const pad    = matCreate(0x222222, 0.7, 0.1);
+    const logo   = matCreate(0xE8322A, 0.3, 0.5);
+    // Ana gövde
+    g.add(box(1.0,1.4,0.5,body));
+    // Ön cep
+    g.add(box(0.82,0.55,0.1,front,0,0.2,0.3));
+    // Ön cep fermuar
+    g.add(box(0.84,0.02,0.1,zip,0,0.48,0.3));
+    // Ana bölüm fermuar
+    g.add(box(1.02,0.02,0.5,zip,0,0.71,0));
+    // Yan fermuarlar
+    g.add(box(0.02,0.7,0.5,zip,-0.51,0.1,0));
+    // Omuz askıları
+    g.add(box(0.14,1.35,0.08,strap,-0.3,0,-0.29));
+    g.add(box(0.14,1.35,0.08,strap, 0.3,0,-0.29));
+    // Göğüs bağı
+    g.add(box(0.6,0.06,0.06,strap,0,0.3,-0.29));
+    g.add(cyl(0.04,0.04,0.07,10,matCreate(0x888888,0.2,0.8),0,0.3,-0.29,0,Math.PI/2,0));
+    // Bel bağı
+    g.add(box(0.5,0.08,0.06,strap,0,-0.55,-0.29));
+    // Sırt pedi
+    g.add(box(0.7,1.1,0.06,pad,0,0.05,-0.29));
+    // Tutma kolu
+    g.add(box(0.22,0.08,0.08,strap,0,0.74,0.05));
+    // Logo
+    g.add(box(0.14,0.14,0.01,logo,0,0.2,0.36));
+    g.add(cyl(0.05,0.05,0.012,12,matCreate(0xffffff,0.4,0.5),0,0.2,0.362));
+    return g;
+  },
+
+};
+
+// BUILDERS tanımlandı — şimdi UI'ı render et
+renderCatTabs();
+renderSurfaceGrid();
+renderStkCatTabs();
+renderStickerGrid();
+
+// ── ANA SİTEDEN GELEN STİCKER ──
+(function checkIncomingSticker(){
+  try {
+    const raw = localStorage.getItem('studioSticker');
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    // 60 saniyeden eski ise yoksay
+    if(Date.now() - data.ts > 60000) { localStorage.removeItem('studioSticker'); return; }
+    localStorage.removeItem('studioSticker');
+    if(!data.img) return;
+    // Gerçek tasarımı resim sticker olarak seç
+    selectedSticker = { url: data.img, l: data.name, isImage: true };
+    showToast(`✅ "${data.name}" seçildi — modele tıkla!`);
+    const grid = document.getElementById('stickerGrid');
+    if(grid){
+      const d = document.createElement('div');
+      d.className = 'stk-item sel';
+      d.innerHTML = `<img src="${data.img}" style="width:100%;height:100%;object-fit:contain;border-radius:6px" alt=""><span class="lbl">${(data.name||'').slice(0,8)}</span>`;
+      d.addEventListener('click', ()=>{
+        document.querySelectorAll('.stk-item').forEach(x=>x.classList.remove('sel'));
+        d.classList.add('sel');
+        selectedSticker = { url: data.img, l: data.name, isImage: true };
+      });
+      grid.prepend(d);
+      d.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  } catch(e) {}
+})();
+
+
+// loadPrimitive — önce BUILDERS kontrol et, yoksa basit geo
+function loadPrimitive(s){
+  if(typeof clearStickers==='function') clearStickers();   // eski yüzeyin sticker'larını temizle
+  if(modelMesh){
+    if(Array.isArray(modelMesh)){modelMesh.forEach(m=>scene.remove(m));modelMesh=null;}
+    else scene.remove(modelMesh);
+  }
+
+  let obj;
+  if(BUILDERS[s.n]){
+    try{ obj = BUILDERS[s.n](); }
+    catch(err){ console.warn('Builder hata:', s.n, err); }
+  }
+
+  if(!obj){
+    // Fallback — basit geometri
+    let geo;
+    if(s.geo==='box') geo=new THREE.BoxGeometry(...s.dim);
+    else if(s.geo==='sph') geo=new THREE.SphereGeometry(s.dim[0],32,32);
+    else geo=new THREE.CylinderGeometry(s.dim[0],s.dim[1],s.dim[2],32);
+    obj=new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.45,metalness:0.55}));
+  }
+
+  modelMesh=obj;
+  scene.add(modelMesh);
+  modelLoaded=true;
+
+  const info=document.getElementById('modelInfo');
+  info.style.display='block';
+  info.innerHTML=`✅ ${s.n} ${BUILDERS[s.n]?'· Detaylı model':'· Basit model'} — Sticker ekle`;
+  document.querySelectorAll('.cp').forEach((x,i)=>x.classList.toggle('sel',i===0));
+}
+
+// applyColor — Group içindeki tüm mesh'lere uygula (sadece ana gövde)
+
+
+// ── LOAD USER GLB — Inline Mini Parser ──
+
+function loadGLB(file){
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(ext !== 'glb' && ext !== 'gltf'){
+    showToast('⚠️ Sadece GLB / GLTF destekleniyor');
+    return;
+  }
+  showToast('⏳ Model yükleniyor…');
+  const url = URL.createObjectURL(file);
+
+  // THREE.GLTFLoader varsa kullan (dışarıdan yüklendiyse)
+  if(window.THREE && window.THREE.GLTFLoader){
+    const loader = new THREE.GLTFLoader();
+    loader.load(url, gltf=>onGLBLoaded(gltf.scene, file.name),
+      null, ()=>showToast('❌ Model yüklenemedi'));
+    return;
+  }
+
+  // GLB binary parse — minimal implementation
+  if(ext === 'glb'){
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const buf = ev.target.result;
+        const view = new DataView(buf);
+        // GLB header check
+        const magic = view.getUint32(0, true);
+        if(magic !== 0x46546C67){ showToast('❌ Geçersiz GLB dosyası'); return; }
+        const version = view.getUint32(4, true);
+        // JSON chunk
+        const jsonLen = view.getUint32(12, true);
+        const jsonData = new TextDecoder().decode(new Uint8Array(buf, 20, jsonLen));
+        const gltf = JSON.parse(jsonData);
+        // BIN chunk
+        const binOffset = 20 + jsonLen + 8;
+        const binLen = view.getUint32(20 + jsonLen, true);
+        const binBuf = buf.slice(binOffset, binOffset + binLen);
+        parseMiniGLTF(gltf, binBuf, file.name);
+      } catch(e){
+        showToast('❌ GLB parse hatası: ' + e.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    showToast('❌ GLTF için GLTFLoader gerekli. GLB formatını kullan.');
+  }
+}
+
+function parseMiniGLTF(gltf, binBuf, name){
+  const group = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({color:0x888888, roughness:0.4, metalness:0.6});
+
+  try {
+    (gltf.meshes || []).forEach(mesh=>{
+      (mesh.primitives || []).forEach(prim=>{
+        const posAcc = gltf.accessors[prim.attributes.POSITION];
+        const posView = gltf.bufferViews[posAcc.bufferView];
+        const posArr = new Float32Array(binBuf, posView.byteOffset||0, posAcc.count*3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(posArr.slice(), 3));
+        if(prim.indices !== undefined){
+          const idxAcc = gltf.accessors[prim.indices];
+          const idxView = gltf.bufferViews[idxAcc.bufferView];
+          const off = idxView.byteOffset || 0;
+          let idxArr;
+          if(idxAcc.componentType === 5123) idxArr = new Uint16Array(binBuf, off, idxAcc.count);
+          else if(idxAcc.componentType === 5125) idxArr = new Uint32Array(binBuf, off, idxAcc.count);
+          else idxArr = new Uint8Array(binBuf, off, idxAcc.count);
+          geo.setIndex(new THREE.BufferAttribute(new Uint32Array(idxArr), 1));
+        }
+        geo.computeVertexNormals();
+        group.add(new THREE.Mesh(geo, mat.clone()));
+      });
+    });
+  } catch(e){
+    // Geometri parse edilemedi — basit kutu göster
+    group.add(new THREE.Mesh(
+      new THREE.BoxGeometry(1,1,1),
+      new THREE.MeshStandardMaterial({color:0x888888, roughness:0.4, metalness:0.6})
+    ));
+    showToast('⚠️ Model basitleştirildi — GLB karmaşık olabilir');
+  }
+
+  onGLBLoaded(group, name);
+}
+
+function onGLBLoaded(obj, name){
+  if(modelMesh) scene.remove(modelMesh);
+  modelMesh = obj;
+  const bbox = new THREE.Box3().setFromObject(obj);
+  const center = bbox.getCenter(new THREE.Vector3());
+  const size = bbox.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z) || 1;
+  const scale = 2.5 / maxDim;
+  obj.scale.setScalar(scale);
+  obj.position.sub(center.multiplyScalar(scale));
+  scene.add(obj);
+  modelLoaded = true;
+  const info = document.getElementById('modelInfo');
+  info.style.display = 'block';
+  info.innerHTML = `✅ ${name} · ${size.x.toFixed(1)}×${size.y.toFixed(1)}×${size.z.toFixed(1)}`;
+  showToast('✅ Model yüklendi! Sticker ekle.');
+}
+
+// Dosya input
+document.getElementById('modelFile').addEventListener('change', e=>{
+  const f = e.target.files[0];
+  if(f) loadGLB(f);
+});
+
+// Upload zone drag & drop
+const uz = document.getElementById('uploadZone');
+uz.addEventListener('dragenter', e=>{ e.preventDefault(); uz.style.borderColor='var(--lime)'; uz.style.background='rgba(200,255,61,.08)'; });
+uz.addEventListener('dragover',  e=>{ e.preventDefault(); });
+uz.addEventListener('dragleave', ()=>{ uz.style.borderColor=''; uz.style.background=''; });
+uz.addEventListener('drop', e=>{
+  e.preventDefault();
+  uz.style.borderColor=''; uz.style.background='';
+  const f = e.dataTransfer.files[0];
+  if(f) loadGLB(f);
+});
+
+// Canvas üzerine de bırakılabilsin
+const canvasWrap = document.getElementById('canvasWrap');
+canvasWrap.addEventListener('dragenter', e=>{ e.preventDefault(); canvasWrap.style.outline='3px solid var(--lime)'; });
+canvasWrap.addEventListener('dragover',  e=>{ e.preventDefault(); });
+canvasWrap.addEventListener('dragleave', ()=>{ canvasWrap.style.outline=''; });
+canvasWrap.addEventListener('drop', e=>{
+  e.preventDefault();
+  canvasWrap.style.outline='';
+  const f = e.dataTransfer.files[0];
+  if(f) loadGLB(f);
+});
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+
+function applyColor(hex){
+  if(!modelMesh) return;
+  const col = new THREE.Color(hex);
+  // Sadece ilk (ana gövde) mesh'e uygula — ekran/aksanlara dokunma
+  if(modelMesh.isGroup){
+    const firstMesh = modelMesh.children.find(c=>c.isMesh);
+    if(firstMesh && firstMesh.material){
+      const m = firstMesh.material;
+      if(Array.isArray(m)) m[0].color.set(col);
+      else m.color.set(col);
+    }
+  } else if(modelMesh.isMesh && modelMesh.material){
+    modelMesh.material.color.set(col);
+  }
+}
+
+// ── ORBIT + 3B STICKER (yüzeye oturan decal) ──
+// Sticker'lar artık 2B overlay değil; modelin yüzeyine konan ve modele BAĞLI
+// (child) 3B düzlemler. Model dönünce onlarla döner, arka yüze geçince saklanır.
+
+const raycaster = new THREE.Raycaster();
+const _ndc = new THREE.Vector2();
+const _Z = new THREE.Vector3(0,0,1);
+const STICKER_GEO = new THREE.PlaneGeometry(1,1);
+const BASE_STK = 0.72;          // sticker'ın temel dünya boyutu (daha görünür)
+const SURF_OFFSET = 0.02;       // z-fighting'i önlemek için yüzeyden ofset (dünya)
+
+let dragEntry=null, downPos=null, moved=false;
+
+function rotZ(rad){
+  return new THREE.Quaternion().setFromAxisAngle(_Z, rad);
+}
+
+// Emoji / sembolü saydam zeminli bir doku haline getir
+function _roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,  x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,  y+h,r);
+  ctx.arcTo(x,  y+h,x,  y,  r);
+  ctx.arcTo(x,  y,  x+w,y,  r);
+  ctx.closePath();
+}
+function emojiTexture(ch){
+  const S=256, pad=20, r=48;
+  const c=document.createElement('canvas'); c.width=c.height=S;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,S,S);
+  // beyaz yuvarlak "die-cut" etiket zemini + yumuşak gölge → her model renginde net görünür
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.4)'; ctx.shadowBlur=16; ctx.shadowOffsetY=5;
+  _roundRect(ctx, pad, pad, S-2*pad, S-2*pad, r);
+  ctx.fillStyle='#ffffff'; ctx.fill();
+  ctx.restore();
+  // ince kenar
+  _roundRect(ctx, pad, pad, S-2*pad, S-2*pad, r);
+  ctx.lineWidth=6; ctx.strokeStyle='rgba(0,0,0,.14)'; ctx.stroke();
+  // sembol/emoji — renkli emoji rengini korur, monokrom semboller koyu olur (beyaz zeminde görünür)
+  ctx.fillStyle='#171717';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font=`${Math.floor(S*0.5)}px "Apple Color Emoji","Segoe UI Emoji","Familjen Grotesk",sans-serif`;
+  ctx.fillText(ch, S/2, S/2 + S*0.02);
+  const t=new THREE.CanvasTexture(c);
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  t.needsUpdate=true;
+  return t;
+}
+function imgTexture(url){
+  const t=new THREE.TextureLoader().load(url, ()=>{ t.needsUpdate=true; });
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return t;
+}
+
+// Ekran koordinatından modele ışın at; sticker'ları yok say
+function raycastModel(clientX, clientY){
+  if(!modelMesh) return null;
+  const rect = canvasEl.getBoundingClientRect();
+  _ndc.x = ((clientX-rect.left)/rect.width)*2 - 1;
+  _ndc.y = -((clientY-rect.top)/rect.height)*2 + 1;
+  raycaster.setFromCamera(_ndc, camera);
+  const hits = raycaster.intersectObject(modelMesh, true);
+  for(const h of hits){ if(!(h.object.userData && h.object.userData.isSticker)) return h; }
+  return null;
+}
+// Yerleştirilmiş sticker'a tıklandı mı?
+function raycastSticker(clientX, clientY){
+  if(!placed.length) return null;
+  const rect = canvasEl.getBoundingClientRect();
+  _ndc.x = ((clientX-rect.left)/rect.width)*2 - 1;
+  _ndc.y = -((clientY-rect.top)/rect.height)*2 + 1;
+  raycaster.setFromCamera(_ndc, camera);
+  const hits = raycaster.intersectObjects(placed.map(p=>p.mesh), false);
+  if(hits.length){ const m=hits[0].object; return placed.find(p=>p.mesh===m) || null; }
+  return null;
+}
+
+// Bir yüzey vuruşunu modelin YEREL uzayında sakla (model dönünce takip etsin)
+function computeLocalAnchor(hit){
+  modelMesh.updateMatrixWorld(true);
+  const invModel = new THREE.Matrix4().copy(modelMesh.matrixWorld).invert();
+  const localPoint = hit.point.clone().applyMatrix4(invModel);
+  const nMatWorld = new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld);
+  const worldN = hit.face.normal.clone().applyMatrix3(nMatWorld).normalize();
+  const nMatInv = new THREE.Matrix3().getNormalMatrix(invModel);
+  const localN = worldN.clone().applyMatrix3(nMatInv).normalize();
+  return { localPoint, localN };
+}
+
+// Saklanan yerel çapa + boyut + dönüşten sticker'ın yerel transformunu kur
+function applyStickerTransform(entry){
+  const mesh = entry.mesh;
+  const modelScale = modelMesh.getWorldScale(new THREE.Vector3()).x || 1;
+  const offsetLocal = SURF_OFFSET / modelScale;
+  const localScale  = (BASE_STK * entry.scale) / modelScale;
+  mesh.position.copy(entry.localPoint).addScaledVector(entry.localN, offsetLocal);
+  const q = new THREE.Quaternion().setFromUnitVectors(_Z, entry.localN);
+  q.multiply(rotZ(entry.rot * Math.PI/180));
+  mesh.quaternion.copy(q);
+  mesh.scale.set(localScale, localScale, 1);
+}
+
+// ── PLACE STICKER — modele tıkla ──
+function placeStk(stk, clientX, clientY){
+  if(!modelMesh){ showToast('Önce bir yüzey seç'); return; }
+  const hit = raycastModel(clientX, clientY);
+  if(!hit){ showToast('🎯 Sticker için modelin üstüne tıkla'); return; }
+
+  const tex = stk.isImage ? imgTexture(stk.url) : emojiTexture(stk.e);
+  const mat = new THREE.MeshBasicMaterial({
+    map: tex, transparent:true, side:THREE.DoubleSide,
+    depthWrite:false, polygonOffset:true,
+    polygonOffsetFactor:-4, polygonOffsetUnits:-4
+  });
+  const mesh = new THREE.Mesh(STICKER_GEO, mat);
+  mesh.userData.isSticker = true;
+  mesh.renderOrder = 5;
+
+  const a = computeLocalAnchor(hit);
+  const entry = { mesh, stk, scale:1, rot:0, localPoint:a.localPoint, localN:a.localN };
+  applyStickerTransform(entry);
+  modelMesh.add(mesh);
+  placed.push(entry);
+  selStk(entry);
+  showToast(`${stk.isImage?'🖼️':stk.e} yüzeye eklendi`);
+}
+
+function removeSticker(entry){
+  if(entry.mesh.parent) entry.mesh.parent.remove(entry.mesh);
+  if(entry.mesh.material.map) entry.mesh.material.map.dispose();
+  entry.mesh.material.dispose();
+  placed = placed.filter(p=>p!==entry);
+  if(selPlaced===entry){ selPlaced=null; resetSelPanel(); }
+}
+function clearStickers(){
+  placed.forEach(p=>{
+    if(p.mesh.parent) p.mesh.parent.remove(p.mesh);
+    if(p.mesh.material.map) p.mesh.material.map.dispose();
+    p.mesh.material.dispose();
+  });
+  placed=[]; selPlaced=null; resetSelPanel();
+}
+function resetSelPanel(){
+  const el=document.getElementById('selPanel');
+  if(el) el.innerHTML='<div style="font-size:11px;opacity:.4">Sticker seçip canvas\'a tıkla</div>';
+}
+
+// ── INPUT ──
+canvasEl.addEventListener('mousedown', e=>{
+  if(e.button!==0) return;
+  downPos={x:e.clientX,y:e.clientY}; moved=false;
+  const s = raycastSticker(e.clientX, e.clientY);
+  if(s){ isDragStk=true; dragEntry=s; selStk(s); }
+  else { isDragModel=true; prevMouse={x:e.clientX,y:e.clientY}; }
+});
+
+window.addEventListener('mousemove', e=>{
+  if(downPos && (Math.abs(e.clientX-downPos.x)+Math.abs(e.clientY-downPos.y))>4) moved=true;
+
+  // Sticker'ı yüzeyde sürükle
+  if(isDragStk && dragEntry && modelMesh){
+    const hit = raycastModel(e.clientX, e.clientY);
+    if(hit){
+      const a = computeLocalAnchor(hit);
+      dragEntry.localPoint=a.localPoint; dragEntry.localN=a.localN;
+      applyStickerTransform(dragEntry);
+    }
+    return;
+  }
+  // Modeli döndür
+  if(isDragModel && modelMesh){
+    const dx=e.clientX-prevMouse.x, dy=e.clientY-prevMouse.y;
+    modelMesh.rotation.y += dx*0.01;
+    modelMesh.rotation.x += dy*0.01;
+    prevMouse={x:e.clientX,y:e.clientY};
+  }
+});
+
+window.addEventListener('mouseup', ()=>{
+  isDragModel=false; isDragStk=false; dragEntry=null;
+});
+
+canvasEl.addEventListener('wheel', e=>{
+  camera.position.z += e.deltaY * 0.005;
+  camera.position.z = Math.max(1, Math.min(9, camera.position.z));
+},{passive:true});
+
+// Temiz tıklama: yeni sticker yerleştir (sürükleme/seçim değilse)
+canvasEl.addEventListener('click', e=>{
+  if(moved){ moved=false; return; }          // döndürme veya sticker taşıma idi
+  const onSticker = raycastSticker(e.clientX, e.clientY);
+  if(onSticker){ selStk(onSticker); return; } // var olanı seç, yeni koyma
+  if(!modelLoaded){ return; }
+  if(!selectedSticker){ showToast('Önce soldan bir sticker seç'); return; }
+  placeStk(selectedSticker, e.clientX, e.clientY);
+});
+
+// ── SEÇİLİ STICKER PANELİ ──
+function selStk(entry){
+  selPlaced=entry;
+  const preview = entry.stk.isImage
+    ? `<img src="${entry.stk.url}" style="width:28px;height:28px;object-fit:contain;border-radius:4px;vertical-align:middle;margin-right:6px">`
+    : `<span style="font-size:22px;vertical-align:middle;margin-right:6px">${entry.stk.e}</span>`;
+
+  const panel=document.getElementById('selPanel');
+  panel.innerHTML=`
+    <div style="display:flex;align-items:center;margin-bottom:10px;font-size:12px;font-weight:700">${preview}Seçili Sticker</div>
+    <div class="slider-row"><span>Boyut</span><span id="stkSzV">${Math.round(entry.scale*100)}%</span></div>
+    <input type="range" id="stkSz" min="20" max="300" step="5" value="${entry.scale*100}">
+    <div class="slider-row" style="margin-top:8px"><span>Döndür</span><span id="stkRtV">${entry.rot}°</span></div>
+    <input type="range" id="stkRt" min="0" max="360" step="1" value="${entry.rot}">
+    <button class="btn" id="delStkBtn" style="margin-top:10px">🗑️ Bu Sticker'ı Sil</button>
+    <div style="font-size:10px;opacity:.35;margin-top:8px">Yerleştirilen sticker'a tıklayıp sürükleyerek yüzeyde taşı</div>`;
+
+  document.getElementById('stkSz').oninput=function(){
+    entry.scale=parseInt(this.value)/100;
+    document.getElementById('stkSzV').textContent=Math.round(entry.scale*100)+'%';
+    applyStickerTransform(entry);
+  };
+  document.getElementById('stkRt').oninput=function(){
+    entry.rot=parseInt(this.value);
+    document.getElementById('stkRtV').textContent=entry.rot+'°';
+    applyStickerTransform(entry);
+  };
+  document.getElementById('delStkBtn').onclick=()=>removeSticker(entry);
+}
+
+// Sticker layer — boş alan tıklamaları altındaki canvas'a geçsin.
+// Sadece yerleştirilen sticker'lar pointer-events:all olur (placeStk içinde).
+// 'all' yaparsak katman tüm olayları yutar → döndürme VE sticker ekleme bozulur.
+document.getElementById('stickerLayer').style.pointerEvents='none';
+
+
+function placeStk_old(){} // eski — yukarıda yeniden yazıldı
+
+
+// ── CONTROLS ──
+document.getElementById('rotateY').addEventListener('input',function(){
+  document.getElementById('rotVal').textContent=this.value+'°';
+  if(modelMesh)modelMesh.rotation.y=this.value*Math.PI/180;
+});
+document.getElementById('lightInt').addEventListener('input',function(){
+  const v=parseFloat(this.value);document.getElementById('lightVal').textContent=v.toFixed(1);
+  ambientLight.intensity=v;dirLight.intensity=v;
+});
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  clearStickers();
+});
+document.getElementById('orderBtn').addEventListener('click',()=>{
+  if(!placed.length){alert('Önce yüzeye sticker ekle.');return;}
+  renderer.render(scene,camera);
+  const list=placed.map(p=>p.stk.l).join(', ');
+  alert('Tasarımın kaydedildi!\n\nSticker: '+list+'\n\nGerçek sistemde: görüntü StickerLab\'a gönderilir, 24 saatte üretilir.');
+});
+
+// init
+loadPrimitive(SURFACES[0]);
+
+</script>
+</body>
+</html>
